@@ -16,5 +16,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push image
         run: |
-          docker build . --tag ghcr.io/esn-trondheim/otto:latest
-          docker push ghcr.io/esn-trondheim/otto:latest
+          docker build . --tag ghcr.io/trthingnes/otto:latest
+          docker push ghcr.io/trthingnes/otto:latest
