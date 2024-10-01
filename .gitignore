@@ -1,9 +1,2 @@
-drivecredentials.json
-notes.txt
-secret-dev.env
-secret-prod.env
-*.code-workspace
-__pycache__
-.vscode
-log
-env
+.venv
+.env
