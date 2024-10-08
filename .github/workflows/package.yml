@@ -22,7 +22,7 @@ jobs:
           docker build . --tag ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:latest
 
-      - name: Deploy DigitalOcean App
+      - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/deploy@v2
         with:
           app_name: otto
