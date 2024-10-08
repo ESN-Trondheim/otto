@@ -29,4 +29,5 @@ def slack_events():
     return handler.handle(request)
 
 if __name__ == "__main__":
-    api.run(host="0.0.0.0", port=os.environ.get("PORT", 8080))
+    from waitress import serve
+    serve(api, host="0.0.0.0", port=os.environ.get("PORT", 8080))
