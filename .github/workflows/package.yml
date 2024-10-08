@@ -24,4 +24,5 @@ jobs:
       - name: Deploy DigitalOcean App
         uses: digitalocean/app_action/deploy@v2
         with:
+          app_name: otto
           token: ${{ secrets.DIGITALOCEAN_TOKEN }}
