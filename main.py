@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 dev_mode_enabled = bool(os.environ.get("DEV_MODE_ENABLED", False))
-port = int(os.environ.get("PORT", 8080))
+port = int(os.environ.get("PORT", 3000))
 
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
