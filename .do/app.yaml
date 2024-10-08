@@ -1,0 +1,8 @@
+name: otto
+services:
+  - name: trthingnes-otto
+  - image:
+      registry_type: GHCR
+      registry: trthingnes
+      repository: otto
+      tag: latest
