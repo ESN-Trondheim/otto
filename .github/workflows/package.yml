@@ -3,7 +3,8 @@ name: Build, push and deploy
 on:
   workflow_dispatch:
 jobs:
-  build-and-publish:
+  build-push-deploy:
+    name: Build, push and deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
