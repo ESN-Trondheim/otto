@@ -2,7 +2,6 @@ from slack_bolt import App
 from slack_sdk import WebClient
 
 # This file contains event handlers for the Slack Bolt app
-# Sample application: https://github.com/slack-samples/bolt-python-assistant-template/blob/main/listeners/events/assistant_thread_started.py
 
 def register_event_handlers(app: App):
     @app.event("assistant_thread_started")

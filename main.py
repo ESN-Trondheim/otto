@@ -11,6 +11,9 @@ from event_handlers import register_event_handlers
 load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 
+# Documentation: https://api.slack.com/docs/apps/ai
+# Sample application: https://github.com/slack-samples/bolt-python-assistant-template/blob/main/listeners/events/assistant_thread_started.py
+
 # Slack Bolt App is created and event handler functions are registered.
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
