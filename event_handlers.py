@@ -15,9 +15,9 @@ def register_event_handlers(app: App):
             text=f"Hey there <@{thread["user_id"]}>! How can I help you today?"
         )
 
-    @app.event("message.im")
+    @app.event("message")
     def message(event, client: WebClient):
-        """Handles the message.im event: https://api.slack.com/events/message.im"""
+        """Handles the message event: https://api.slack.com/events/message.im"""
         client.chat_postMessage(
             channel=event["channel"], 
             thread_ts=event["thread_ts"],
