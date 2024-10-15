@@ -12,5 +12,5 @@ def register_event_handlers(app: App):
         client.chat_postMessage(
             channel=channel_id, 
             thread_ts=thread_ts,
-            text="Hey there <@{user_id}>! How can I help you today?"
+            text=f"Hey there <@{user_id}>! How can I help you today?"
         )
