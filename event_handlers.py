@@ -6,11 +6,20 @@ from slack_sdk import WebClient
 
 def register_event_handlers(app: App):
     @app.event("assistant_thread_started")
-    def thread_started(payload, client: WebClient):
-        thread = payload["assistant_thread"]
-        user_id, channel_id, thread_ts = thread["user_id"], thread["channel_id"], thread["thread_ts"]
+    def assistant_thread_started(event, client: WebClient):
+        """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
+        thread = event["assistant_thread"]
         client.chat_postMessage(
-            channel=channel_id, 
-            thread_ts=thread_ts,
-            text=f"Hey there <@{user_id}>! How can I help you today?"
+            channel=thread["channel_id"], 
+            thread_ts=thread["thread_ts"],
+            text=f"Hey there <@{thread["user_id"]}>! How can I help you today?"
+        )
+
+    @app.event("message.im")
+    def message(event, client: WebClient):
+        """Handles the message.im event: https://api.slack.com/events/message.im"""
+        client.chat_postMessage(
+            channel=event["channel"], 
+            thread_ts=event["thread_ts"],
+            text=f"<@{event["user"]}> said: '{event["text"]}'"
         )
