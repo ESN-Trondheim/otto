@@ -19,8 +19,8 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build . --tag ghcr.io/${{ github.repository }}:latest
-          docker push ghcr.io/${{ github.repository }}:latest
+          docker build . --tag ghcr.io/esn-trondheim/otto:latest
+          docker push ghcr.io/esn-trondheim/otto:latest
 
       - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/deploy@v2
