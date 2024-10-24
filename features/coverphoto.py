@@ -42,19 +42,17 @@ class ImageTextFont(Enum):
     SUBTITLE = ImageFont.truetype(str(Path.cwd().joinpath("assets", "kelson-sans-bold.otf")), 50)
 
 
-class ImageTextOffsets(Enum):
-    ACTIVITIES = {
-        "solotitle": 19,
-        "title": -6,
-        "subtitle": 116,
-        "subsubtitle": 178,
-    }
-    FACEBOOK = {
-        "solotitle": 19,
-        "title": -6,
-        "subtitle": 90,
-        "subsubtitle": 152,
-    }
+class ImageOffset():
+    def __init__(self, solotitle, title, subtitle, subsubtitle):
+        self.solotitle = solotitle
+        self.title = title, 
+        self.subtitle = subtitle, 
+        self.subsubtitle = subsubtitle
+
+
+class ImageOffsets(Enum):
+    ACTIVITIES = ImageOffset(solotitle=19, title=-6, subtitle=116, subsubtitle=178)
+    FACEBOOK = ImageOffset(solotitle=19, title=-6, subtitle=90, subsubtitle=152)
 
 
 def create_cover_image(
@@ -62,6 +60,7 @@ def create_cover_image(
     background: Image.Image,
     color: EsnColor,
     overlay: ImageOverlay,
+    offsets: ImageOffsets,
     title: str,
     subtitle: str,
     subsubtitle: str,
@@ -70,13 +69,7 @@ def create_cover_image(
     cover = resize_and_crop_to_dimension(cover, dimension)
     cover = add_color_layer(cover, color)
     cover = add_overlay_layer(cover, overlay)
-
-    if subtitle or subsubtitle:
-        add_text_layer(cover, title, FONTS["title"], V_OFFFSETS[logos]["title"])
-        add_text_layer(cover, subtitle, FONTS["subtitle"], V_OFFFSETS[logos]["subtitle"])
-        add_text_layer(cover, subsubtitle, FONTS["subtitle"], V_OFFFSETS[logos]["subtitle2"])
-    else:
-        add_text_layer(cover, title, FONTS["title"], V_OFFFSETS[logos]["titleonly"])
+    cover = add_text_layer(cover, offsets, title, subtitle, subsubtitle)
 
     return cover
 
@@ -127,7 +120,7 @@ def add_overlay_layer(image: Image.Image, overlay: ImageOverlay):
     image.paste(overlay.value, (0, 0), overlay)
     return image
 
-def add_text_layer(image: Image.Image, offsets: ImageTextOffsets, title: str, subtitle: str, subsubtitle: str):
+def add_text_layer(image: Image.Image, offsets: ImageOffsets, title: str, subtitle: str, subsubtitle: str):
     if subtitle or subsubtitle:
         image = add_title(image, title)
         image = add_subtitle(image, subtitle)
@@ -135,13 +128,25 @@ def add_text_layer(image: Image.Image, offsets: ImageTextOffsets, title: str, su
     else:
         image = add_solo_title(image, title)
 
-def add_solo_title(image: Image.Image, offsets: ImageTextOffsets, text: str):
+def add_title(image: Image.Image, offsets: ImageOffsets, text: str):
+    return add_text(image, ImageTextFont.TITLE.value, offsets.value.title, text)
+
+def add_subtitle(image: Image.Image, offsets: ImageOffsets, text: str):
+    return add_text(image, ImageTextFont.SUBTITLE.value, offsets.value.subtitle, text)
+
+def add_subsubtitle(image: Image.Image, offsets: ImageOffsets, text: str):
+    return add_text(image, ImageTextFont.SUBTITLE.value, offsets.value.subsubtitle, text)
+
+def add_solo_title(image: Image.Image, offsets: ImageOffsets, text: str):
+    return add_text(image, ImageTextFont.TITLE.value, offsets.value.solotitle, text)
+
+def add_text(image: Image.Image, font: ImageFont.FreeTypeFont, offset: int, text: str):
     draw = ImageDraw.Draw(image)
-    left, top, right, bottom = draw.textbbox((0, 0), text=text, font=ImageTextFont.TITLE.value)
+    left, top, right, bottom = draw.textbbox((0, 0), text=text, font=font)
     width = right - left
     height = bottom - top
     draw.text(
-        ((image.width - width) / 2, (image.width - height) / 2 + offsets.value["title"]),
+        ((image.size[0] - width) / 2, (image.size[1] - height) / 2 + offset),
         text,
-        font=ImageTextFont.TITLE.value,
+        font=font,
     )
