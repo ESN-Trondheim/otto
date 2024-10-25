@@ -1,4 +1,3 @@
-import logging
 import os
 
 from dotenv import load_dotenv
@@ -7,8 +6,9 @@ from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_sdk import WebClient
 
+from commands import handle_command
+
 load_dotenv()
-logging.basicConfig(level=logging.DEBUG)
 
 # Documentation: https://api.slack.com/docs/apps/ai
 # Sample application: https://github.com/slack-samples/bolt-python-assistant-template/blob/main/listeners/events/assistant_thread_started.py
@@ -20,7 +20,7 @@ app = App(
 
 
 @app.event("assistant_thread_started")
-def assistant_thread_started(event, client: WebClient):
+def assistant_thread_started(event: dict, client: WebClient):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
     thread = event["assistant_thread"]
     client.chat_postMessage(
@@ -31,13 +31,9 @@ def assistant_thread_started(event, client: WebClient):
 
 
 @app.event("message")
-def message(event, client: WebClient):
+def message(event: dict, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
-    client.chat_postMessage(
-        channel=event["channel"],
-        thread_ts=event["thread_ts"],
-        text=f"<@{event["user"]}> said: '{event["text"]}'",
-    )
+    handle_command(event, client)
 
 
 @app.middleware
