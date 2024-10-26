@@ -53,10 +53,13 @@ def unknown_command(event: dict, client: WebClient):
 
 @command("help", "Get this list of all available commands.")
 def help(event: dict, client: WebClient):
+    header = "*Available commands*\n"
+    command_list = "\n".join([f"*{command.keyword}*: {command.description}" for command in commands.values()])
+
     client.chat_postMessage(
         channel=event["channel"],
         thread_ts=event["thread_ts"],
-        text="\n".join([f"{command.keyword}: {command.description}" for command in commands.values()]),
+        text=header + command_list,
     )
 
 
