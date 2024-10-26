@@ -56,7 +56,7 @@ def help(event: dict, client: WebClient):
     client.chat_postMessage(
         channel=event["channel"],
         thread_ts=event["thread_ts"],
-        text=[f"{command.keyword}: {command.description}" for command in commands.values()].join("\n"),
+        text="\n".join([f"{command.keyword}: {command.description}" for command in commands.values()]),
     )
 
 
