@@ -1,10 +1,11 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, request
+from slack_sdk import WebClient
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
-from slack_sdk import WebClient
+from flask import Flask, request
+from waitress import serve
 
 from commands import extract_and_handle_command
 
@@ -38,6 +39,7 @@ def message(event: dict, client: WebClient):
 
 @app.middleware
 def log_request(logger, body, next):
+    """Logs all requests from Slack for debug purposes"""
     logger.debug(body)
     return next()
 
@@ -55,6 +57,4 @@ def slack_events():
 
 # When this file is executed directly the API is served.
 if __name__ == "__main__":
-    from waitress import serve
-
     serve(api, host="0.0.0.0", port=os.environ.get("PORT", 8080))
