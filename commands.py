@@ -3,13 +3,11 @@ from typing import Any, Callable
 
 from slack_sdk import WebClient
 
-from utils import SlackMessageEvent
-
 
 class Command:
     def __init__(
         self,
-        function: Callable[[SlackMessageEvent, WebClient], Any],
+        function: Callable[[dict, WebClient], Any],
         keyword: str,
         description: str,
     ):
@@ -25,15 +23,15 @@ commands: dict[str, Command] = {}
 def command(keyword: str, description: str) -> Callable:
     """Annotation used to annotate command handlers"""
 
-    def register_command(function: Callable[[SlackMessageEvent, WebClient], Any]):
+    def register_command(function: Callable[[dict, WebClient], Any]):
         logging.debug(f"Registered command '{keyword}'")
         commands[keyword] = Command(function, keyword, description)
 
     return register_command
 
 
-def extract_and_handle_command(event: SlackMessageEvent, client: WebClient):
-    first_word = event.text.split(" ")[0]
+def extract_and_handle_command(event: dict, client: WebClient):
+    first_word = event["text"].split(" ")[0]
     logging.debug(f"Extracted command '{first_word}'")
     command = commands.get(first_word)
 
@@ -54,7 +52,7 @@ def unknown_command(event: dict, client: WebClient):
 
 
 @command("help", "Get this list of all available commands.")
-def help(event: SlackMessageEvent, client: WebClient):
+def help(event: dict, client: WebClient):
     client.chat_postMessage(
         channel=event["channel"],
         thread_ts=event["thread_ts"],
@@ -66,7 +64,7 @@ def help(event: SlackMessageEvent, client: WebClient):
     "coverimage",
     "Create a cover image based on the provided background picture and information.",
 )
-def coverimage(event: SlackMessageEvent, client: WebClient):
+def coverimage(event: dict, client: WebClient):
     client.chat_postMessage(
         channel=event["channel"],
         thread_ts=event["thread_ts"],

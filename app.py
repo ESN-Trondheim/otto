@@ -9,7 +9,6 @@ from slack_sdk import WebClient
 from waitress import serve
 
 from commands import extract_and_handle_command
-from utils import SlackMessageEvent
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
@@ -36,9 +35,9 @@ def assistant_thread_started(event: dict, client: WebClient):
 
 
 @app.event("message")
-def message(event: SlackMessageEvent, client: WebClient):
+def message(event: dict, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
-    logging.debug(f"Received message: '{event.text}'")
+    logging.debug(f"Received message: '{event["text"]}'")
     extract_and_handle_command(event, client)
 
 

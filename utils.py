@@ -12,13 +12,3 @@ class EsnColor(Enum):
 
     def rgb(self):
         return getcolor(self.value, "RGB")
-
-
-class SlackMessageEvent:
-    type: str
-    channel: str
-    user: str
-    text: str
-    ts: str
-    event_ts: str
-    channel_type: str
