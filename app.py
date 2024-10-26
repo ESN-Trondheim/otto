@@ -6,7 +6,7 @@ from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_sdk import WebClient
 
-from commands import handle_command
+from commands import extract_and_handle_command
 
 load_dotenv()
 
@@ -33,7 +33,7 @@ def assistant_thread_started(event: dict, client: WebClient):
 @app.event("message")
 def message(event: dict, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
-    handle_command(event, client)
+    extract_and_handle_command(event, client)
 
 
 @app.middleware

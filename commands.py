@@ -10,6 +10,7 @@ class Command:
         self.description = description
 
 
+# All registered commands will be kept in this dict
 commands: dict[str, Command] = {}
 
 
@@ -22,12 +23,17 @@ def command(keyword: str, description: str) -> Callable:
     return register_command
 
 
-def handle_command(event: dict, client: WebClient):
+def extract_and_handle_command(event: dict, client: WebClient):
     keyword = "coverimage" # TODO: Extract keyword from message
     commands.get(keyword).function(event, client)
 
 
-@command("coverimage", "Create a cover image based on the provided background picture and information")
+@command("help", "Get this list of all available commands.")
+def help(event: dict, client: WebClient):
+    pass
+
+
+@command("coverimage", "Create a cover image based on the provided background picture and information.")
 def coverimage(event: dict, client: WebClient):
     client.chat_postMessage(
         channel=event["channel"],
