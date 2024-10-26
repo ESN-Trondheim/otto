@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Callable
 
 from slack_sdk import WebClient
@@ -7,7 +8,10 @@ from utils import SlackMessageEvent
 
 class Command:
     def __init__(
-        self, function: Callable[[SlackMessageEvent, WebClient], Any], keyword: str, description: str
+        self,
+        function: Callable[[SlackMessageEvent, WebClient], Any],
+        keyword: str,
+        description: str,
     ):
         self.function = function
         self.keyword = keyword
@@ -22,6 +26,7 @@ def command(keyword: str, description: str) -> Callable:
     """Annotation used to annotate command handlers"""
 
     def register_command(function: Callable[[SlackMessageEvent, WebClient], Any]):
+        logging.debug(f"Registered command '{keyword}'")
         commands[keyword] = Command(function, keyword, description)
 
     return register_command
@@ -29,11 +34,14 @@ def command(keyword: str, description: str) -> Callable:
 
 def extract_and_handle_command(event: SlackMessageEvent, client: WebClient):
     first_word = event.text.split(" ")[0]
+    logging.debug(f"Extracted command '{first_word}'")
     command = commands.get(first_word)
 
     if command:
+        logging.debug(f"Running command function for '{command.keyword}'")
         command.function(event, client)
     else:
+        logging.debug(f"Running unknown command function")
         unknown_command(event, client)
 
 
@@ -55,7 +63,8 @@ def help(event: SlackMessageEvent, client: WebClient):
 
 
 @command(
-    "coverimage", "Create a cover image based on the provided background picture and information."
+    "coverimage",
+    "Create a cover image based on the provided background picture and information.",
 )
 def coverimage(event: SlackMessageEvent, client: WebClient):
     client.chat_postMessage(

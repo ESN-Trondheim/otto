@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -10,6 +11,7 @@ from waitress import serve
 from commands import extract_and_handle_command
 from utils import SlackMessageEvent
 
+logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 # Documentation: https://api.slack.com/docs/apps/ai
@@ -17,7 +19,8 @@ load_dotenv()
 
 # Slack Bolt App is created and event handler functions are registered.
 app = App(
-    token=os.environ.get("SLACK_BOT_TOKEN"), signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
+    token=os.environ.get("SLACK_BOT_TOKEN"),
+    signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
 )
 
 
@@ -35,6 +38,7 @@ def assistant_thread_started(event: dict, client: WebClient):
 @app.event("message")
 def message(event: SlackMessageEvent, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
+    logging.debug(f"Received message: '{event.text}'")
     extract_and_handle_command(event, client)
 
 

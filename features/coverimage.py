@@ -29,7 +29,9 @@ class CoverImageOverlay(Enum):
     ESN_ACTIVITIES = Image.open(
         Path.cwd().joinpath("assets", "overlays", "coverimage-activities.png")
     )
-    FACEBOOK = Image.open(Path.cwd().joinpath("assets", "overlays", "coverimage-facebook.png"))
+    FACEBOOK = Image.open(
+        Path.cwd().joinpath("assets", "overlays", "coverimage-facebook.png")
+    )
 
 
 class CoverImageTextOffsets(Enum):
@@ -91,7 +93,9 @@ def create_cover_image(
     return cover
 
 
-def resize_and_crop_to_dimension(image: Image.Image, target_dimension: CoverImageDimension):
+def resize_and_crop_to_dimension(
+    image: Image.Image, target_dimension: CoverImageDimension
+):
     if image.size == target_dimension.size():
         return image
 
@@ -103,7 +107,9 @@ def resize_and_crop_to_dimension(image: Image.Image, target_dimension: CoverImag
         # Resize the image so the height reaches the target width (while maintaining original aspect ratio)
         resize_ratio = image.width / target_dimension.width()
         new_height = int(image.height / resize_ratio)
-        image = image.resize((target_dimension.width(), new_height), Image.Resampling.LANCZOS)
+        image = image.resize(
+            (target_dimension.width(), new_height), Image.Resampling.LANCZOS
+        )
 
         # Crop away the excessive height if neccessary
         if image.height > target_dimension.height():
@@ -114,7 +120,9 @@ def resize_and_crop_to_dimension(image: Image.Image, target_dimension: CoverImag
         # Resize the image so the height reaches the target height (while maintaining original aspect ratio)
         resize_ratio = image.height / target_dimension.height()
         new_width = int(image.width / resize_ratio)
-        image = image.resize((new_width, target_dimension.height()), Image.Resampling.LANCZOS)
+        image = image.resize(
+            (new_width, target_dimension.height()), Image.Resampling.LANCZOS
+        )
 
         # Crop away the excessive width if neccessary
         if image.width > target_dimension.width():
@@ -154,24 +162,35 @@ def add_text_layer(
 
 
 def add_title(image: Image.Image, text_offsets: CoverImageTextOffsets, text: str):
-    return add_text(image, CoverImageTextFont.TITLE.value, text_offsets.title_offset(), text)
+    return add_text(
+        image, CoverImageTextFont.TITLE.value, text_offsets.title_offset(), text
+    )
 
 
 def add_subtitle(image: Image.Image, text_offsets: CoverImageTextOffsets, text: str):
-    return add_text(image, CoverImageTextFont.SUBTITLE.value, text_offsets.subtitle_offset(), text)
+    return add_text(
+        image, CoverImageTextFont.SUBTITLE.value, text_offsets.subtitle_offset(), text
+    )
 
 
 def add_subsubtitle(image: Image.Image, text_offsets: CoverImageTextOffsets, text: str):
     return add_text(
-        image, CoverImageTextFont.SUBTITLE.value, text_offsets.subsubtitle_offset(), text
+        image,
+        CoverImageTextFont.SUBTITLE.value,
+        text_offsets.subsubtitle_offset(),
+        text,
     )
 
 
 def add_solo_title(image: Image.Image, text_offsets: CoverImageTextOffsets, text: str):
-    return add_text(image, CoverImageTextFont.TITLE.value, text_offsets.solotitle_offset(), text)
+    return add_text(
+        image, CoverImageTextFont.TITLE.value, text_offsets.solotitle_offset(), text
+    )
 
 
-def add_text(image: Image.Image, font: ImageFont.FreeTypeFont, text_offset: int, text: str):
+def add_text(
+    image: Image.Image, font: ImageFont.FreeTypeFont, text_offset: int, text: str
+):
     draw = ImageDraw.Draw(image)
 
     left, top, right, bottom = draw.textbbox((0, 0), text=text, font=font)
@@ -187,5 +206,7 @@ def add_text(image: Image.Image, font: ImageFont.FreeTypeFont, text_offset: int,
 
 
 if __name__ == "__main__":
-    cover = create_cover_image("Title", format=CoverImageFormat.FACEBOOK, color=EsnColor.MAGENTA)
+    cover = create_cover_image(
+        "Title", format=CoverImageFormat.FACEBOOK, color=EsnColor.MAGENTA
+    )
     cover.save(Path.cwd().joinpath("cover.png"))
