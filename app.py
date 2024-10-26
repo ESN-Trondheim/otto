@@ -8,6 +8,7 @@ from flask import Flask, request
 from waitress import serve
 
 from commands import extract_and_handle_command
+from utils import SlackMessageEvent
 
 load_dotenv()
 
@@ -32,7 +33,7 @@ def assistant_thread_started(event: dict, client: WebClient):
 
 
 @app.event("message")
-def message(event: dict, client: WebClient):
+def message(event: SlackMessageEvent, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
     extract_and_handle_command(event, client)
 
