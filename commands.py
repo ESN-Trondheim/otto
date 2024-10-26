@@ -6,7 +6,9 @@ from utils import SlackMessageEvent
 
 
 class Command:
-    def __init__(self, function: Callable[[SlackMessageEvent, WebClient]], keyword: str, description: str):
+    def __init__(
+        self, function: Callable[[SlackMessageEvent, WebClient]], keyword: str, description: str
+    ):
         self.function = function
         self.keyword = keyword
         self.description = description
@@ -52,7 +54,9 @@ def help(event: SlackMessageEvent, client: WebClient):
     )
 
 
-@command("coverimage", "Create a cover image based on the provided background picture and information.")
+@command(
+    "coverimage", "Create a cover image based on the provided background picture and information."
+)
 def coverimage(event: SlackMessageEvent, client: WebClient):
     client.chat_postMessage(
         channel=event["channel"],

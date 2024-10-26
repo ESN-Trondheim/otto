@@ -1,4 +1,5 @@
 from enum import Enum
+
 from PIL.ImageColor import getcolor
 
 
@@ -11,7 +12,7 @@ class EsnColor(Enum):
 
     def rgb(self):
         return getcolor(self.value, "RGB")
-    
+
 
 class SlackMessageEvent:
     type: str
