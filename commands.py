@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Any, Callable
 
 from slack_sdk import WebClient
 
@@ -7,7 +7,7 @@ from utils import SlackMessageEvent
 
 class Command:
     def __init__(
-        self, function: Callable[[SlackMessageEvent, WebClient]], keyword: str, description: str
+        self, function: Callable[[SlackMessageEvent, WebClient], Any], keyword: str, description: str
     ):
         self.function = function
         self.keyword = keyword
@@ -21,7 +21,7 @@ commands: dict[str, Command] = {}
 def command(keyword: str, description: str) -> Callable:
     """Annotation used to annotate command handlers"""
 
-    def register_command(function: Callable[[dict, WebClient]]):
+    def register_command(function: Callable[[SlackMessageEvent, WebClient], Any]):
         commands[keyword] = Command(function, keyword, description)
 
     return register_command
