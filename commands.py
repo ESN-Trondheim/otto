@@ -76,10 +76,4 @@ def coverimage(event: dict, client: WebClient):
     image_content = io.BytesIO()
 
     coverimage.save(image_content, format="JPEG")
-    client.files_upload_v2(content=image_content, channel=event["channel"], thread_ts=event["thread_ts"])
-
-    client.chat_postMessage(
-        channel=event["channel"],
-        thread_ts=event["thread_ts"],
-        text=f"<@{event["user"]}> said: '{event["text"]}'",
-    )
+    client.files_upload_v2(content=image_content.getvalue(), channel=event["channel"], thread_ts=event["thread_ts"])
