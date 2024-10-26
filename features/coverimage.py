@@ -60,8 +60,8 @@ class CoverImageTextFont(Enum):
     )
 
 
-default_subtitle = ""
-default_subsubtitle = ""
+default_subtitle = None
+default_subsubtitle = None
 default_color = EsnColor.DARK_BLUE
 default_format = CoverImageFormat.ESN_ACTIVITIES
 default_background = Image.open(

@@ -1,7 +1,10 @@
+import io
 import logging
 from typing import Any, Callable
 
 from slack_sdk import WebClient
+
+from features.coverimage import create_cover_image
 
 
 class Command:
@@ -53,7 +56,7 @@ def unknown_command(event: dict, client: WebClient):
 
 @command("help", "Get this list of all available commands.")
 def help(event: dict, client: WebClient):
-    header = "*Available commands*\n"
+    header = "*Available commands*\n\n"
     command_list = "\n".join([f"*{command.keyword}*: {command.description}" for command in commands.values()])
 
     client.chat_postMessage(
@@ -68,6 +71,13 @@ def help(event: dict, client: WebClient):
     "Create a cover image based on the provided background picture and information.",
 )
 def coverimage(event: dict, client: WebClient):
+    title = " ".join(event["text"].split(" ")[1:])
+    coverimage = create_cover_image(title)
+    image_content = io.BytesIO()
+
+    coverimage.save(image_content, format="JPEG")
+    client.files_upload_v2(content=image_content, channel=event["channel"], thread_ts=event["thread_ts"])
+
     client.chat_postMessage(
         channel=event["channel"],
         thread_ts=event["thread_ts"],
