@@ -3,12 +3,13 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, request
-from slack_bolt import App
+from slack_bolt import App, Assistant, Say
 from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_sdk import WebClient
 from waitress import serve
 
 from commands import extract_and_handle_command
+from blocks import welcome_blocks
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
@@ -21,24 +22,21 @@ app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
 )
+assistant = Assistant()
+app.use(assistant)
 
 
-@app.event("assistant_thread_started")
-def assistant_thread_started(event: dict, client: WebClient):
+@assistant.thread_started
+def assistant_thread_started(say: Say):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
-    thread = event["assistant_thread"]
-    client.chat_postMessage(
-        channel=thread["channel_id"],
-        thread_ts=thread["thread_ts"],
-        text=f"Hey there <@{thread["user_id"]}>! How can I help you today?",
-    )
+    say(blocks=welcome_blocks)
 
 
-@app.event("message")
-def message(event: dict, client: WebClient):
+@assistant.user_message
+def message(payload: dict, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
-    logging.debug(f"Received message: '{event["text"]}'")
-    extract_and_handle_command(event, client)
+    logging.debug(f"Received message: '{payload["text"]}'")
+    extract_and_handle_command(payload, client)
 
 
 @app.middleware

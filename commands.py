@@ -57,7 +57,9 @@ def unknown_command(event: dict, client: WebClient):
 @command("help", "Get this list of all available commands.")
 def help(event: dict, client: WebClient):
     header = "*Available commands*\n\n"
-    command_list = "\n".join([f"*{command.keyword}*: {command.description}" for command in commands.values()])
+    command_list = "\n".join(
+        [f"*{command.keyword}*: {command.description}" for command in commands.values()]
+    )
 
     client.chat_postMessage(
         channel=event["channel"],
@@ -76,4 +78,8 @@ def coverimage(event: dict, client: WebClient):
     image_content = io.BytesIO()
 
     coverimage.save(image_content, format="JPEG")
-    client.files_upload_v2(content=image_content.getvalue(), channel=event["channel"], thread_ts=event["thread_ts"])
+    client.files_upload_v2(
+        content=image_content.getvalue(),
+        channel=event["channel"],
+        thread_ts=event["thread_ts"],
+    )
