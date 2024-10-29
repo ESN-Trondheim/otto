@@ -204,9 +204,3 @@ def add_text(
 
     return image
 
-
-if __name__ == "__main__":
-    cover = create_cover_image(
-        "Title", format=CoverImageFormat.FACEBOOK, color=EsnColor.MAGENTA
-    )
-    cover.save(Path.cwd().joinpath("cover.png"))
