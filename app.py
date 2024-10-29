@@ -9,7 +9,7 @@ from slack_sdk import WebClient
 from waitress import serve
 
 from commands import extract_and_handle_command
-from blocks import welcome_blocks
+from blocks.welcome import welcome_blocks
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
