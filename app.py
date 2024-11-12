@@ -9,7 +9,7 @@ from slack_sdk import WebClient
 from waitress import serve
 
 from commands import extract_and_handle_command
-from blocks.welcome import welcome_blocks
+from blocks.welcome import welcome_message_blocks
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
@@ -29,7 +29,7 @@ app.use(assistant)
 @assistant.thread_started
 def assistant_thread_started(say: Say):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
-    say(blocks=welcome_blocks)
+    say(blocks=welcome_message_blocks)
 
 
 @assistant.user_message

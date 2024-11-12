@@ -1,41 +1,10 @@
 from commands import commands
 
-
-buttons = ", ".join(
-    [
-        f"""
-            {{
-                "type": "button",
-                "text": {{
-                    "type": "plain_text",
-                    "text": "{command.keyword}",
-                    "emoji": true
-                }},
-                "value": "{command.keyword}",
-                "action_id": "{command.keyword}"
-            }}
-        """
-        for command in commands.values()
-    ]
-)
+from helpers import blocks, section, actions, button
 
 
-welcome_blocks = f"""{{
-        "blocks": [
-            {{
-                "type": "section",
-                "text": {{
-                    "type": "plain_text",
-                    "text": "Hey :wave: What would you like to do today?",
-                    "emoji": true
-                }}
-            }},
-            {{
-                "type": "actions",
-                "elements": [
-                   {buttons}
-                ]
-            }}
-        ]
-}}
-"""
+welcome_message_buttons = ", ".join([button(command.keyword, command.keyword) for command in commands])
+welcome_message_blocks = blocks([
+    section("Hey :wave: What would you like to do today?"),
+    actions([welcome_message_buttons])
+])
