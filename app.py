@@ -5,13 +5,14 @@ from dotenv import load_dotenv
 from flask import Flask, request
 from slack_bolt import App, Assistant, Say
 from slack_bolt.adapter.flask import SlackRequestHandler
+from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk import WebClient
 from waitress import serve
 
 from blocks.welcome import welcome_message_blocks
 from commands import extract_and_handle_command
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO, force=True)
 load_dotenv()
 
 # Documentation: https://api.slack.com/docs/apps/ai
@@ -57,6 +58,11 @@ def slack_events():
     return slack_handler.handle(request)
 
 
-# When this file is executed directly the API is served.
+# When this file is executed directly the API is served either by opening a websocket connection to Slack for local development, or by exposing the Flask API.
 if __name__ == "__main__":
-    serve(api, host="0.0.0.0", port=os.environ.get("PORT", 8080))
+    if os.environ.get("SOCKET_MODE") == "True":
+        logging.info("Starting app in socket mode...")
+        SocketModeHandler(app, os.environ.get("SLACK_APP_TOKEN")).start()
+    else:
+        logging.info("Starting app in API mode...")
+        serve(api, host="0.0.0.0", port=os.environ.get("PORT", 8080))
