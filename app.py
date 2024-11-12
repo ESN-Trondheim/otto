@@ -8,8 +8,8 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_sdk import WebClient
 from waitress import serve
 
-from commands import extract_and_handle_command
 from blocks.welcome import welcome_message_blocks
+from commands import extract_and_handle_command
 
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()

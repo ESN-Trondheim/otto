@@ -2,7 +2,9 @@ blocks = lambda elements: """
     {{
         "blocks": [{0}]
     }}
-""".format(", ".join(elements))
+""".format(
+    ", ".join(elements)
+)
 
 section = lambda text: """
     {{
@@ -13,14 +15,18 @@ section = lambda text: """
 			"emoji": true
 		}}
 	}}
-""".format(text)
+""".format(
+    text
+)
 
 actions = lambda elements: """
     {{
         "type": "actions",
         "elements": [{0}]
     }}
-""".format(", ".join(elements))
+""".format(
+    ", ".join(elements)
+)
 
 button = lambda text, value: """
     {{
@@ -33,4 +39,6 @@ button = lambda text, value: """
         "value": "{1}",
         "action_id": "{1}"
     }}
-""".format(text, value)
+""".format(
+    text, value
+)

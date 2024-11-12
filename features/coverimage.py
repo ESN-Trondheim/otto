@@ -203,4 +203,3 @@ def add_text(
     )
 
     return image
-
