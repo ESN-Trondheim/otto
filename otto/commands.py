@@ -4,7 +4,7 @@ from typing import Any, Callable
 
 from slack_sdk import WebClient
 
-from features.coverimage import create_cover_image
+from otto.features.coverimage import create_cover_image
 
 
 class Command:
@@ -33,7 +33,7 @@ def command(keyword: str, description: str) -> Callable:
     return register_command
 
 
-def extract_and_handle_command(event: dict, client: WebClient):
+def run_message_command(event: dict, client: WebClient):
     first_word = event["text"].split(" ")[0]
     logging.debug(f"Extracted command '{first_word}'")
     command = commands.get(first_word)
@@ -44,6 +44,10 @@ def extract_and_handle_command(event: dict, client: WebClient):
     else:
         logging.debug(f"Running unknown command function")
         unknown_command(event, client)
+
+
+def run_action_command(action: dict, client: WebClient):
+    print(action)
 
 
 def unknown_command(event: dict, client: WebClient):

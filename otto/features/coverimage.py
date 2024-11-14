@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from utils import EsnColor
+from otto.utils import EsnColor
 
 
 class CoverImageFormat(Enum):
