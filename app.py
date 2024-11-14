@@ -30,6 +30,7 @@ app.use(assistant)
 @assistant.thread_started
 def assistant_thread_started(say: Say):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
+    logging.debug(f"New thread started")
     say(blocks=welcome_message_blocks)
 
 
@@ -38,13 +39,6 @@ def message(payload: dict, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
     logging.debug(f"Received message: '{payload["text"]}'")
     extract_and_handle_command(payload, client)
-
-
-@app.middleware
-def log_request(logger, body, next):
-    """Logs all requests from Slack for debug purposes"""
-    logger.debug(body)
-    return next()
 
 
 # When this file is executed directly the API is served either by opening a websocket connection to Slack for local development, or by exposing the Flask API.
@@ -57,7 +51,7 @@ if __name__ == "__main__":
         logging.info("Starting app in API mode...")
         slack_request_handler = SlackRequestHandler(app)
         api = Flask(__name__)
-
+        
         @api.route("/slack/events", methods=["POST"])
         def slack_events():
             """This is the main entry point of Slack events into the application"""
