@@ -8,20 +8,15 @@ def section(text: str):
         },
     }
 
+
 def actions(elements: list[dict[str, any]]):
-    return {
-        "type": "actions",
-        "elements": elements
-    }
+    return {"type": "actions", "elements": elements}
+
 
 def button(text: str, value: str) -> dict:
     return {
         "type": "button",
-        "text": {
-            "type": "plain_text",
-            "text": text,
-            "emoji": True
-        },
+        "text": {"type": "plain_text", "text": text, "emoji": True},
         "value": value,
-        "action_id": value
+        "action_id": value,
     }

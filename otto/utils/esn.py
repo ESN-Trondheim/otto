@@ -12,3 +12,4 @@ class EsnColor(Enum):
 
     def rgb(self):
         return getcolor(self.value, "RGB")
+    

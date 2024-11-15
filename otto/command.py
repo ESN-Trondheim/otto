@@ -1,10 +1,7 @@
-import io
 import logging
 from typing import Any, Callable
 
 from slack_sdk import WebClient
-
-from otto.features.coverimage import create_cover_image
 
 
 class Command:
@@ -33,7 +30,7 @@ def command(keyword: str, description: str) -> Callable:
     return register_command
 
 
-def run_message_command(event: dict, client: WebClient):
+def extract_and_run_command(event: dict, client: WebClient):
     first_word = event["text"].split(" ")[0]
     logging.debug(f"Extracted command '{first_word}'")
     command = commands.get(first_word)
@@ -43,19 +40,11 @@ def run_message_command(event: dict, client: WebClient):
         command.function(event, client)
     else:
         logging.debug(f"Running unknown command function")
-        unknown_command(event, client)
-
-
-def run_action_command(action: dict, client: WebClient):
-    print(action)
-
-
-def unknown_command(event: dict, client: WebClient):
-    client.chat_postMessage(
-        channel=event["channel"],
-        thread_ts=event["thread_ts"],
-        text="I don't recognize that command. Please try again or type 'help' for a list of commands.",
-    )
+        client.chat_postMessage(
+            channel=event["channel"],
+            thread_ts=event["thread_ts"],
+            text="I don't recognize that command. Please try again or type 'help' for a list of commands.",
+        )    
 
 
 @command("help", "Get this list of all available commands.")
@@ -69,21 +58,4 @@ def help(event: dict, client: WebClient):
         channel=event["channel"],
         thread_ts=event["thread_ts"],
         text=header + command_list,
-    )
-
-
-@command(
-    "coverimage",
-    "Create a cover image based on the provided background picture and information.",
-)
-def coverimage(event: dict, client: WebClient):
-    title = " ".join(event["text"].split(" ")[1:])
-    coverimage = create_cover_image(title)
-    image_content = io.BytesIO()
-
-    coverimage.save(image_content, format="JPEG")
-    client.files_upload_v2(
-        content=image_content.getvalue(),
-        channel=event["channel"],
-        thread_ts=event["thread_ts"],
     )
