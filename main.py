@@ -1,3 +1,4 @@
+import sys
 import logging
 import os
 
@@ -7,6 +8,7 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from waitress import serve
 
+sys.dont_write_bytecode = True
 logging.basicConfig(level=logging.INFO, force=True)
 load_dotenv()
 

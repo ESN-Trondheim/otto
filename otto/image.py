@@ -1,34 +1,37 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from PIL.Image import Image
+
+from otto.config import IMAGE_RETENTION
 
 
 class TimestampedImage:
     def __init__(
         self,
         image: Image,
-        time: datetime,
     ):
         self.image = image
-        self.time = time
+        self.time = datetime.now()
 
 
+# All images are kept in memory using this dictionary.
 images: dict[str, TimestampedImage] = {}
 
 
-def add_image(id: str, image: Image):
+def store_image(id: str, image: Image):
     remove_old_images()
-    images[id] = TimestampedImage(image, datetime.now())
+    images[id] = TimestampedImage(image)
 
 
-def get_image(thread_id: str) -> Image | None:
+def retrieve_image(id: str) -> Image | None:
     remove_old_images()
-    return images.get(thread_id, None)
+    return images.get(id, None)
 
 
 def remove_old_images():
     now = datetime.now()
-    for thread_id, ts_image in images.items():
-        age = now - ts_image.time
-        if age > timedelta(hours=24):
-            images.remove(thread_id)
+    for id, timestamped_image in images.items():
+        age = now - timestamped_image.time
+
+        if age > IMAGE_RETENTION:
+            images.remove(id)
