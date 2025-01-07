@@ -31,6 +31,7 @@ def command(keyword: str, description: str) -> Callable:
 
 
 def extract_and_run_command(event: dict, client: WebClient):
+    """Function to run a command based on a message event"""
     first_word = event["text"].split(" ")[0]
     logging.debug(f"Extracted command '{first_word}'")
     command = commands.get(first_word)
