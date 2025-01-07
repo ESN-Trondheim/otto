@@ -1,4 +1,4 @@
-from os import environ
+import os
 from io import BytesIO
 
 import requests
@@ -13,8 +13,8 @@ from otto.image import store_image
 # Sample application: https://github.com/slack-samples/bolt-python-assistant-template/blob/main/listeners/events/assistant_thread_started.py
 
 app = App(
-    signing_secret=environ.get("SLACK_SIGNING_SECRET"),
-    token=environ.get("SLACK_BOT_TOKEN"),
+    signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
+    token=os.environ.get("SLACK_BOT_TOKEN"),
 )
 assistant = Assistant()
 app.use(assistant)
@@ -29,8 +29,7 @@ def handle_assistant_thread_started(say: Say):
 @assistant.user_message
 def handle_message(context: BoltContext, event: dict, say: Say, client: WebClient):
     """Handles the message event: https://api.slack.com/events/message.im"""
-    print(event)
-    if hasattr(event, "files"):
+    if event.get("subtype", None) == "file_share":
         handle_file_share(context, event, say, client)
     else:
         extract_and_run_command(event, client)
@@ -39,18 +38,15 @@ def handle_message(context: BoltContext, event: dict, say: Say, client: WebClien
 def handle_file_share(context: BoltContext, event: dict, say: Say, client: WebClient):
     """Attempt to read received files as images"""
 
-    # Get file info from Slack (https://api.slack.com/methods/files.info)
-    file_info = client.files_info(file=event["file_id"]) 
+    file = event["files"][0]
 
     # Supported file extensions is extracted from Pillow
     supported_extensions = { e for e, f in Image.registered_extensions().items() if f in Image.OPEN }
-    if not f".{file_info["filetype"]}" in supported_extensions:
+    if not f".{file["filetype"]}" in supported_extensions:
         say("The file you sent is not a supported image type. Please try another format!")
         return
 
-    # Read the response into a Pillow Image and store it for later.
-    file_response = requests.get(file_info["file"]["url_private"], headers={"Authorization": f"Bearer {client.token}"})
-    file_response.raise_for_status()
+    file_response = requests.get(file["url_private"], headers={"Authorization": f"Bearer {client.token}"})
     store_image(context.thread_ts, Image.open(BytesIO(file_response.content)))
 
     say("Nice image! I will use it for the commands in this thread.")
