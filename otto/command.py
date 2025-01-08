@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Callable
 
-from slack_bolt import BoltContext
+from slack_bolt import BoltContext, Say
 from slack_sdk import WebClient
 
 
@@ -50,7 +50,7 @@ def extract_and_run_command(event: dict, context: BoltContext, client: WebClient
 
 
 @command("help", "Get this list of all available commands.")
-def help(event: dict, client: WebClient):
+def help(event: dict, context: BoltContext, client: WebClient):
     header = "*Available commands*\n\n"
     command_list = "\n".join(
         [f"*{command.keyword}*: {command.description}" for command in commands.values()]

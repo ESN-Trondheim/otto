@@ -23,7 +23,12 @@ def store_image(id: str, image: Image):
 
 def retrieve_image(id: str) -> Image | None:
     remove_old_images()
-    return images.get(id, None).image
+    ts_image = images.get(id, None)
+
+    if ts_image is None:
+        return None
+    
+    return ts_image.image
 
 
 def remove_old_images():
