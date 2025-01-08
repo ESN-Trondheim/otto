@@ -27,15 +27,16 @@ def handle_assistant_thread_started(say: Say):
 
 
 @assistant.user_message
-def handle_message(context: BoltContext, event: dict, say: Say, client: WebClient):
+def handle_message(event: dict, context: BoltContext, client: WebClient, say: Say):
     """Handles the message event: https://api.slack.com/events/message.im"""
+
     if event.get("subtype", None) == "file_share":
-        handle_file_share(context, event, say, client)
+        handle_file_share(event, context, client, say)
     else:
-        extract_and_run_command(event, client)
+        extract_and_run_command(event, context, client)
 
 
-def handle_file_share(context: BoltContext, event: dict, say: Say, client: WebClient):
+def handle_file_share(event: dict, context: BoltContext, client: WebClient, say: Say):
     """Attempt to read received files as images"""
 
     file = event["files"][0]
@@ -43,7 +44,7 @@ def handle_file_share(context: BoltContext, event: dict, say: Say, client: WebCl
     # Supported file extensions is extracted from Pillow
     supported_extensions = { e for e, f in Image.registered_extensions().items() if f in Image.OPEN }
     if not f".{file["filetype"]}" in supported_extensions:
-        say("The file you sent is not a supported image type. Please try another format!")
+        say("The file you sent is not a supported image. Please try another format!")
         return
 
     file_response = requests.get(file["url_private"], headers={"Authorization": f"Bearer {client.token}"})

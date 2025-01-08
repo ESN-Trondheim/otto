@@ -12,7 +12,7 @@ sys.dont_write_bytecode = True
 logging.basicConfig(level=logging.INFO, force=True)
 load_dotenv()
 
-from otto.app import app
+from otto import app
 
 # When this file is executed directly the API is served either by opening a websocket connection to Slack for local development, or by exposing the Flask API.
 if __name__ == "__main__":

@@ -1,8 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from PIL.Image import Image
-
-from otto.config import IMAGE_RETENTION
 
 
 class TimestampedImage:
@@ -25,7 +23,7 @@ def store_image(id: str, image: Image):
 
 def retrieve_image(id: str) -> Image | None:
     remove_old_images()
-    return images.get(id, None)
+    return images.get(id, None).image
 
 
 def remove_old_images():
@@ -33,5 +31,5 @@ def remove_old_images():
     for id, timestamped_image in images.items():
         age = now - timestamped_image.time
 
-        if age > IMAGE_RETENTION:
+        if age > timedelta(hours=24):
             images.remove(id)
