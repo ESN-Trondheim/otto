@@ -2,7 +2,7 @@ import io
 
 from slack_bolt import Args
 
-from otto import app
+from otto.app import app
 from otto.features.coverimage.generator import (CoverImageFormat,
                                                 create_cover_image)
 from otto.image import retrieve_image
