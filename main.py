@@ -1,6 +1,6 @@
-import sys
 import logging
 import os
+import sys
 
 from dotenv import load_dotenv
 from flask import Flask, request

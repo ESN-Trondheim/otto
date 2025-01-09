@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from io import BytesIO
 
-from PIL import Image
 import requests
+from PIL import Image
 from slack_bolt import Args
 
 
@@ -30,7 +30,7 @@ def retrieve_image(id: str) -> Image.Image | None:
 
     if ts_image is None:
         return None
-    
+
     return ts_image.image
 
 
@@ -49,13 +49,19 @@ def handle_image_share(args: Args):
     file = args.event["files"][0]
 
     # Supported file extensions is extracted from Pillow
-    supported_extensions = { e for e, f in Image.registered_extensions().items() if f in Image.OPEN }
+    supported_extensions = {
+        e for e, f in Image.registered_extensions().items() if f in Image.OPEN
+    }
     if not f".{file["filetype"]}" in supported_extensions:
-        args.say("The file you sent is not a supported image. Please try another format!")
+        args.say(
+            "The file you sent is not a supported image. Please try another format!"
+        )
         return
 
     # Retrieve and store image
-    file_response = requests.get(file["url_private"], headers={"Authorization": f"Bearer {args.client.token}"})
+    file_response = requests.get(
+        file["url_private"], headers={"Authorization": f"Bearer {args.client.token}"}
+    )
     store_image(args.event["thread_ts"], Image.open(BytesIO(file_response.content)))
 
     args.say("Nice image! I'll keep it in this thread for any image-based commands.")

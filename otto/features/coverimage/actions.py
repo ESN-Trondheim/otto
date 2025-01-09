@@ -3,10 +3,12 @@ import io
 from slack_bolt import Args
 
 from otto import app
-from otto.features.coverimage.generator import CoverImageFormat, create_cover_image
+from otto.features.coverimage.generator import (CoverImageFormat,
+                                                create_cover_image)
 from otto.image import retrieve_image
 from otto.utils.actions import transform_action_state_values
 from otto.utils.esn import EsnColor
+
 
 @app.action("generate_coverimage")
 def coverimage(args: Args):
@@ -18,9 +20,22 @@ def coverimage(args: Args):
     state = transform_action_state_values(args.body["state"]["values"])
 
     if image:
-        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor.from_display_name(state['color']), format=CoverImageFormat.from_value(state['format']), background=image)
+        coverimage = create_cover_image(
+            title=state["title"],
+            subtitle=state["subtitle"],
+            subsubtitle=state["subsubtitle"],
+            color=EsnColor.from_display_name(state["color"]),
+            format=CoverImageFormat.from_value(state["format"]),
+            background=image,
+        )
     else:
-        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor.from_display_name(state['color']), format=CoverImageFormat.from_value(state['format']))
+        coverimage = create_cover_image(
+            title=state["title"],
+            subtitle=state["subtitle"],
+            subsubtitle=state["subsubtitle"],
+            color=EsnColor.from_display_name(state["color"]),
+            format=CoverImageFormat.from_value(state["format"]),
+        )
 
     image_content = io.BytesIO()
     coverimage.save(image_content, format="JPEG")

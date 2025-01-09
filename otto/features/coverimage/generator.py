@@ -11,7 +11,7 @@ class CoverImageFormat(Enum):
     FACEBOOK = "Facebook"
 
     @staticmethod
-    def from_value(value: str): 
+    def from_value(value: str):
         for f in CoverImageFormat:
             if f.value == value:
                 return f

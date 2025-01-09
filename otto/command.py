@@ -27,7 +27,7 @@ def command(keyword: str, description: str) -> Callable:
         logging.debug(f"Registered command '{keyword}'")
         commands[keyword] = Command(function, keyword, description)
 
-    return register_command   
+    return register_command
 
 
 @command("help", "Get this list of all available commands.")
@@ -51,12 +51,14 @@ def handle_text_command(args: Args):
     command = commands.get(first_word)
 
     if command:
-        logging.debug(f"Running command function for '{command.keyword}'")        
-        command.function(args) # Using kwargs to pass all Slack functions to the handler.
+        logging.debug(f"Running command function for '{command.keyword}'")
+        command.function(
+            args
+        )  # Using kwargs to pass all Slack functions to the handler.
     else:
         logging.debug(f"Running unknown command function")
         args.client.chat_postMessage(
             channel=args.event["channel"],
             thread_ts=args.event["thread_ts"],
             text="I don't recognize that command. Please try again or type 'help' for a list of commands.",
-        ) 
+        )
