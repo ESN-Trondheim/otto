@@ -159,8 +159,10 @@ def add_text_layer(
 ):
     if subtitle or subsubtitle:
         image = add_title(image, text_offsets, title)
-        image = add_subtitle(image, text_offsets, subtitle)
-        image = add_subsubtitle(image, text_offsets, subsubtitle)
+        if subtitle:
+            image = add_subtitle(image, text_offsets, subtitle)
+        if subsubtitle:
+            image = add_subsubtitle(image, text_offsets, subsubtitle)
     else:
         image = add_solo_title(image, text_offsets, title)
 
