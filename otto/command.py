@@ -1,14 +1,13 @@
 import logging
 from typing import Any, Callable
 
-from slack_bolt import BoltContext, Say
-from slack_sdk import WebClient
+from slack_bolt import Args
 
 
 class Command:
     def __init__(
         self,
-        function: Callable[[dict, WebClient], Any],
+        function: Callable[[Args], Any],
         keyword: str,
         description: str,
     ):
@@ -24,40 +23,40 @@ commands: dict[str, Command] = {}
 def command(keyword: str, description: str) -> Callable:
     """Annotation used to annotate command handlers"""
 
-    def register_command(function: Callable[[dict, BoltContext, WebClient], Any]):
+    def register_command(function: Callable[[Args], Any]):
         logging.debug(f"Registered command '{keyword}'")
         commands[keyword] = Command(function, keyword, description)
 
-    return register_command
-
-
-def extract_and_run_command(event: dict, context: BoltContext, client: WebClient):
-    """Function to run a command based on a message event"""
-    first_word = event["text"].split(" ")[0]
-    logging.debug(f"Extracted command '{first_word}'")
-    command = commands.get(first_word)
-
-    if command:
-        logging.debug(f"Running command function for '{command.keyword}'")
-        command.function(event, context, client)
-    else:
-        logging.debug(f"Running unknown command function")
-        client.chat_postMessage(
-            channel=event["channel"],
-            thread_ts=event["thread_ts"],
-            text="I don't recognize that command. Please try again or type 'help' for a list of commands.",
-        )    
+    return register_command   
 
 
 @command("help", "Get this list of all available commands.")
-def help(event: dict, context: BoltContext, client: WebClient):
+def help(args: Args):
     header = "*Available commands*\n\n"
     command_list = "\n".join(
         [f"*{command.keyword}*: {command.description}" for command in commands.values()]
     )
 
-    client.chat_postMessage(
-        channel=event["channel"],
-        thread_ts=event["thread_ts"],
+    args.client.chat_postMessage(
+        channel=args.event["channel"],
+        thread_ts=args.event["thread_ts"],
         text=header + command_list,
     )
+
+
+def handle_text_command(args: Args):
+    """Function to run a command based on a message event"""
+    first_word = args.event["text"].split(" ")[0]
+    logging.debug(f"Extracted command '{first_word}'")
+    command = commands.get(first_word)
+
+    if command:
+        logging.debug(f"Running command function for '{command.keyword}'")        
+        command.function(args) # Using kwargs to pass all Slack functions to the handler.
+    else:
+        logging.debug(f"Running unknown command function")
+        args.client.chat_postMessage(
+            channel=args.event["channel"],
+            thread_ts=args.event["thread_ts"],
+            text="I don't recognize that command. Please try again or type 'help' for a list of commands.",
+        ) 

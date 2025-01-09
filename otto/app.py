@@ -1,13 +1,9 @@
 import os
-from io import BytesIO
 
-import requests
-from PIL import Image
-from slack_bolt import App, Assistant, BoltContext, Say
-from slack_sdk import WebClient
+from slack_bolt import App, Args, Assistant
 
-from otto.command import extract_and_run_command
-from otto.image import store_image
+from otto.command import handle_text_command
+from otto.image import handle_image_share
 
 # Documentation: https://api.slack.com/docs/apps/ai
 # Sample application: https://github.com/slack-samples/bolt-python-assistant-template/blob/main/listeners/events/assistant_thread_started.py
@@ -21,33 +17,15 @@ app.use(assistant)
 
 
 @assistant.thread_started
-def handle_assistant_thread_started(say: Say):
+def handle_assistant_thread_started(args: Args):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
-    say(text="Hey :wave: What would you like to do?")
+    args.say(text="Hey :wave: What would you like to do?")
 
 
 @assistant.user_message
-def handle_message(event: dict, context: BoltContext, client: WebClient, say: Say):
+def handle_message(args: Args):
     """Handles the message event: https://api.slack.com/events/message.im"""
-
-    if event.get("subtype", None) == "file_share":
-        handle_file_share(event, context, client, say)
+    if args.event.get("subtype", None) == "file_share":
+        handle_image_share(args)
     else:
-        extract_and_run_command(event, context, client)
-
-
-def handle_file_share(event: dict, context: BoltContext, client: WebClient, say: Say):
-    """Attempt to read received files as images"""
-
-    file = event["files"][0]
-
-    # Supported file extensions is extracted from Pillow
-    supported_extensions = { e for e, f in Image.registered_extensions().items() if f in Image.OPEN }
-    if not f".{file["filetype"]}" in supported_extensions:
-        say("The file you sent is not a supported image. Please try another format!")
-        return
-
-    file_response = requests.get(file["url_private"], headers={"Authorization": f"Bearer {client.token}"})
-    store_image(context.thread_ts, Image.open(BytesIO(file_response.content)))
-
-    say("Nice image! I will use it for the commands in this thread.")
+        handle_text_command(args)
