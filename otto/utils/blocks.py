@@ -12,9 +12,10 @@ def section(text: str):
 def text_input(text: str, value: str):
     return {
         "type": "input",
+        "dispatch_action": False,
         "element": {
             "type": "plain_text_input",
-            "action_id": value
+            "action_id": value,
         },
         "label": {
 			"type": "plain_text",
@@ -27,6 +28,7 @@ def text_input(text: str, value: str):
 def select_input(text: str, value: str, options: list[str]):
     return {
         "type": "input",
+        "dispatch_action": False,
         "element": {
             "type": "static_select",
 			"placeholder": {
@@ -53,6 +55,7 @@ def select_input(text: str, value: str, options: list[str]):
 			"emoji": True
 		}
     }
+
 
 def actions(elements: list[dict[str, any]]):
     return {"type": "actions", "elements": elements}

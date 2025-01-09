@@ -1,11 +1,12 @@
 import io
 
-from slack_bolt import Ack, BoltContext
+from slack_bolt import Ack
 from slack_sdk import WebClient
 
 from otto import app
 from otto.features.coverimage.generator import create_cover_image
 from otto.image import retrieve_image
+from otto.utils.actions import transform_action_state_values
 from otto.utils.blocks import actions, button, section, select_input, text_input
 from otto.utils.esn import EsnColor
 
@@ -21,22 +22,24 @@ COVERIMAGE_BLOCKS = [
 
 
 @app.action("generate_coverimage")
-def coverimage(action: dict, context: BoltContext, client: WebClient, ack: Ack):
+def coverimage(body: dict, client: WebClient, ack: Ack):
     ack()
 
-    print(action)
-    
-    image = retrieve_image(context.thread_ts)
+    thread_ts = body["container"]["thread_ts"]
+    channel_id = body["container"]["channel_id"]
+    state = transform_action_state_values(body["state"]["values"])
+    image = retrieve_image(thread_ts)
+
     if image:
-        coverimage = create_cover_image(title=action['title'], subtitle=action['subtitle'], subsubtitle=action['subsubtitle'], color=EsnColor[action['color']], background=image)
+        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor[state['color']], background=image)
     else:
-        coverimage = create_cover_image(title=action['title'], subtitle=action['subtitle'], subsubtitle=action['subsubtitle'], color=EsnColor[action['color']])
+        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor[state['color']])
 
     image_content = io.BytesIO()
     coverimage.save(image_content, format="JPEG")
 
     client.files_upload_v2(
         content=image_content.getvalue(),
-        channel=context.channel_id,
-        thread_ts=context.thread_ts,
+        thread_ts=thread_ts,
+        channel=channel_id
     )

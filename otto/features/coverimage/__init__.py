@@ -3,7 +3,7 @@ from slack_sdk import WebClient
 
 from otto.command import command
 from otto.image import retrieve_image
-from otto.features.coverimage.blocks import COVERIMAGE_BLOCKS
+from otto.features.coverimage.ui import COVERIMAGE_BLOCKS
 
 
 @command(
