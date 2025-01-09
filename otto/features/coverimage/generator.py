@@ -7,8 +7,14 @@ from otto.utils.esn import EsnColor
 
 
 class CoverImageFormat(Enum):
-    ESN_ACTIVITIES = "activites"
-    FACEBOOK = "facebook"
+    ESN_ACTIVITIES = "Activities"
+    FACEBOOK = "Facebook"
+
+    @staticmethod
+    def from_value(value: str): 
+        for f in CoverImageFormat:
+            if f.value == value:
+                return f
 
 
 class CoverImageDimension(Enum):

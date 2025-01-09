@@ -8,7 +8,7 @@ class EsnColor(Enum):
     MAGENTA = ("Magenta", "#EC008C")
     GREEN =("Green", "#7AC143") 
     ORANGE = ("Orange", "#F47B20")
-    DARK_BLUE = ("Dark blue", "#2E3192")
+    DARK_BLUE = ("Dark Blue", "#2E3192")
 
     def display_name(self):
         return self.value[0]

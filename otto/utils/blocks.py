@@ -25,8 +25,8 @@ def text_input(text: str, value: str):
     }
 
 
-def select_input(text: str, value: str, options: list[str]):
-    return {
+def select_input(text: str, value: str, options: list[str], initial_option: str = None):
+    dict = {
         "type": "input",
         "dispatch_action": False,
         "element": {
@@ -55,6 +55,18 @@ def select_input(text: str, value: str, options: list[str]):
 			"emoji": True
 		}
     }
+
+    if initial_option is not None:
+        dict["element"]["initial_option"] = {
+            "text": {
+				"type": "plain_text",
+				"text": initial_option if initial_option else options[0],
+				"emoji": True
+			},
+			"value": initial_option if initial_option else options[0]
+        }
+
+    return dict
 
 
 def actions(elements: list[dict[str, any]]):
