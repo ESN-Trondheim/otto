@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from io import BytesIO
 
-from PIL.Image import Image
+from PIL import Image
 import requests
 from slack_bolt import Args
 
@@ -9,7 +9,7 @@ from slack_bolt import Args
 class TimestampedImage:
     def __init__(
         self,
-        image: Image,
+        image: Image.Image,
     ):
         self.image = image
         self.time = datetime.now()
@@ -19,12 +19,12 @@ class TimestampedImage:
 images: dict[str, TimestampedImage] = {}
 
 
-def store_image(id: str, image: Image):
+def store_image(id: str, image: Image.Image):
     remove_old_images()
     images[id] = TimestampedImage(image)
 
 
-def retrieve_image(id: str) -> Image | None:
+def retrieve_image(id: str) -> Image.Image | None:
     remove_old_images()
     ts_image = images.get(id, None)
 
