@@ -18,9 +18,9 @@ def coverimage(args: Args):
     state = transform_action_state_values(args.body["state"]["values"])
 
     if image:
-        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor[state['color']], background=image)
+        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor.from_display_name(state['color']), background=image)
     else:
-        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor[state['color']])
+        coverimage = create_cover_image(title=state['title'], subtitle=state['subtitle'], subsubtitle=state['subsubtitle'], color=EsnColor.from_display_name(state['color']))
 
     image_content = io.BytesIO()
     coverimage.save(image_content, format="JPEG")
@@ -28,7 +28,7 @@ def coverimage(args: Args):
     args.client.chat_postMessage(
         channel=channel_id,
         thread_ts=thread_ts,
-        text="I'm sending over your coverimage now. It's looking great!",
+        text="I'm sending over your coverimage now. It's looking great :100:",
     )
 
     args.client.files_upload_v2(

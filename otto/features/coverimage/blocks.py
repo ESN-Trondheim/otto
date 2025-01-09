@@ -7,6 +7,6 @@ COVERIMAGE_BLOCKS = [
     text_input(text="Title", value="title"),
     text_input(text="Subtitle", value="subtitle"),
     text_input(text="Subsubtitle", value="subsubtitle"),
-    select_input(text="Color", value="color", options=[c.name for c in EsnColor]),
+    select_input(text="Color", value="color", options=[c.display_name() for c in EsnColor]),
     actions(elements=[button(text="Generate", value="generate_coverimage")])
 ]

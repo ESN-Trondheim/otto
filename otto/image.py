@@ -58,4 +58,4 @@ def handle_image_share(args: Args):
     file_response = requests.get(file["url_private"], headers={"Authorization": f"Bearer {args.client.token}"})
     store_image(args.event["thread_ts"], Image.open(BytesIO(file_response.content)))
 
-    args.say("Nice image! I will use it for the commands in this thread.")
+    args.say("Nice image! I'll keep it in this thread for any image-based commands.")
