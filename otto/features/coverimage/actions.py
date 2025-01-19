@@ -3,8 +3,7 @@ import io
 from slack_bolt import Args
 
 from otto.app import app
-from otto.features.coverimage.generator import (CoverImageFormat,
-                                                create_cover_image)
+from otto.features.coverimage.generator import CoverImageFormat, create_cover_image
 from otto.image import retrieve_image
 from otto.utils.actions import transform_action_state_values
 from otto.utils.esn import EsnColor

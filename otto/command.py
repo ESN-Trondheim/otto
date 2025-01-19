@@ -56,7 +56,7 @@ def handle_text_command(args: Args):
             args
         )  # Using kwargs to pass all Slack functions to the handler.
     else:
-        logging.debug(f"Running unknown command function")
+        logging.debug("Running unknown command function")
         args.client.chat_postMessage(
             channel=args.event["channel"],
             thread_ts=args.event["thread_ts"],
