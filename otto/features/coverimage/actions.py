@@ -49,4 +49,5 @@ def coverimage(args: Args):
         channel=channel_id,
         thread_ts=thread_ts,
         content=image_content.getvalue(),
+        filename="coverimage.png"
     )
