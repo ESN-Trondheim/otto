@@ -42,7 +42,7 @@ def coverimage(args: Args):
     args.client.chat_postMessage(
         channel=channel_id,
         thread_ts=thread_ts,
-        text="I'm sending over your coverimage now. It's looking great :100:",
+        text="Your cover image is on its way over! Remember: You can change a couple of settings above and generate again if something is off.",
     )
 
     args.client.files_upload_v2(

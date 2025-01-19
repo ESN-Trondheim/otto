@@ -52,7 +52,7 @@ def handle_image_share(args: Args):
     supported_extensions = {
         e for e, f in Image.registered_extensions().items() if f in Image.OPEN
     }
-    if not f".{file["filetype"]}" in supported_extensions:
+    if f".{file["filetype"]}" not in supported_extensions:
         args.say(
             "The file you sent is not a supported image. Please try another format!"
         )
@@ -64,4 +64,4 @@ def handle_image_share(args: Args):
     )
     store_image(args.event["thread_ts"], Image.open(BytesIO(file_response.content)))
 
-    args.say("Nice image! I'll keep it in this thread for any image-based commands.")
+    args.say("Nice image! I will use it for everything image related from now on, until you make a new thread or replace it.")

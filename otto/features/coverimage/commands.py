@@ -10,16 +10,16 @@ from otto.image import retrieve_image
     "Create a cover image based on the provided background picture and information.",
 )
 def coverimage(args: Args):
+    if retrieve_image(args.event["thread_ts"]) is None:
+        args.client.chat_postMessage(
+            channel=args.event["channel"],
+            thread_ts=args.event["thread_ts"],
+            text=":warning: Remember to upload an image if you do not want me to use the default one. You can upload one right now and keep going if you'd like!",
+        )
+
     args.client.chat_postMessage(
         channel=args.event["channel"],
         thread_ts=args.event["thread_ts"],
         text="Alright! Let's make a cover image :esnstar:",
         blocks=COVERIMAGE_BLOCKS,
     )
-
-    if retrieve_image(args.event["thread_ts"]) is None:
-        args.client.chat_postMessage(
-            channel=args.event["channel"],
-            thread_ts=args.event["thread_ts"],
-            text=":warning: I will use the default picture if you don't upload one now :warning:",
-        )

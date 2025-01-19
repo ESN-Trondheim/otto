@@ -22,7 +22,7 @@ def text_input(text: str, value: str):
 
 
 def select_input(text: str, value: str, options: list[str], initial_option: str = None):
-    dict = {
+    d = {
         "type": "input",
         "dispatch_action": False,
         "element": {
@@ -45,7 +45,7 @@ def select_input(text: str, value: str, options: list[str], initial_option: str 
     }
 
     if initial_option is not None:
-        dict["element"]["initial_option"] = {
+        d["element"]["initial_option"] = {
             "text": {
                 "type": "plain_text",
                 "text": initial_option if initial_option else options[0],
@@ -54,17 +54,18 @@ def select_input(text: str, value: str, options: list[str], initial_option: str 
             "value": initial_option if initial_option else options[0],
         }
 
-    return dict
+    return d
 
 
 def actions(elements: list[dict[str, any]]):
     return {"type": "actions", "elements": elements}
 
 
-def button(text: str, value: str) -> dict:
+def button(text: str, value: str, style: str = "default") -> dict:
     return {
         "type": "button",
         "text": {"type": "plain_text", "text": text, "emoji": True},
         "value": value,
         "action_id": value,
+        "style": style
     }

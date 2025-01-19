@@ -4,17 +4,16 @@ from otto.utils.esn import EsnColor
 
 COVERIMAGE_BLOCKS = [
     section(text="Alright! Let's make a cover image :esnstar:"),
-    text_input(text="Title", value="title"),
+    text_input(text="Title (required)", value="title"),
     text_input(text="Subtitle", value="subtitle"),
     text_input(text="Subsubtitle", value="subsubtitle"),
     select_input(
-        text="Color", value="color", options=[c.display_name() for c in EsnColor]
+        text="Color (required)", value="color", options=[c.display_name() for c in EsnColor]
     ),
     select_input(
-        text="Format",
+        text="Format (required)",
         value="format",
-        options=[f.value for f in CoverImageFormat],
-        initial_option=CoverImageFormat.ESN_ACTIVITIES.value,
+        options=[f.value for f in CoverImageFormat]
     ),
-    actions(elements=[button(text="Generate", value="generate_coverimage")]),
+    actions(elements=[button(text="Generate", value="generate_coverimage", style="primary")]),
 ]
