@@ -24,6 +24,14 @@ class CoverImageFormat(Enum):
             Path.cwd().joinpath("assets", "overlays", "coverimage-activities.png")
         ),
     )
+    HOOPLA = (
+        "Hoopla",
+        (1045, 588),
+        (19, -6, 90, 152),
+        Image.open(
+            Path.cwd().joinpath("assets", "overlays", "coverimage-hoopla.png")
+        ),
+    )
     FACEBOOK = (
         "Facebook",
         (1568, 588),
@@ -41,8 +49,8 @@ class CoverImageFormat(Enum):
 
         obj._value_ = value
         obj.size = size
-        obj.overlay = overlay
         obj.offset = offset
+        obj.overlay = overlay
 
         return obj
 
