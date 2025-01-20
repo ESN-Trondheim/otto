@@ -67,5 +67,5 @@ def button(text: str, value: str, style: str = "default") -> dict:
         "text": {"type": "plain_text", "text": text, "emoji": True},
         "value": value,
         "action_id": value,
-        "style": style
+        "style": style,
     }

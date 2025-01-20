@@ -20,6 +20,7 @@ class Command:
 commands: dict[str, Command] = {}
 
 
+# TODO: For some reason I cannot run a function that is also a command. Something is wrong with the decorator.
 def command(keyword: str, description: str) -> Callable:
     """Annotation used to annotate command handlers"""
 
@@ -31,15 +32,15 @@ def command(keyword: str, description: str) -> Callable:
 
 
 @command("help", "Get this list of all available commands.")
-def help(args: Args):
+def send_command_list(args: Args):
     header = "*Available commands*\n\n"
     command_list = "\n".join(
         [f"*{command.keyword}*: {command.description}" for command in commands.values()]
     )
 
     args.client.chat_postMessage(
-        channel=args.event["channel"],
-        thread_ts=args.event["thread_ts"],
+        channel=args.context.channel_id,
+        thread_ts=args.context.thread_ts,
         text=header + command_list,
     )
 
@@ -58,7 +59,7 @@ def handle_text_command(args: Args):
     else:
         logging.debug("Running unknown command function")
         args.client.chat_postMessage(
-            channel=args.event["channel"],
-            thread_ts=args.event["thread_ts"],
+            channel=args.context.channel_id,
+            thread_ts=args.context.thread_ts,
             text="I don't recognize that command. Please try again or type 'help' for a list of commands.",
         )

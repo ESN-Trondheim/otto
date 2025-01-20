@@ -2,7 +2,7 @@ import os
 
 from slack_bolt import App, Args, Assistant
 
-from otto.command import handle_text_command
+from otto.command import handle_text_command, commands
 from otto.image import handle_image_share
 
 # Documentation: https://api.slack.com/docs/apps/ai
@@ -19,7 +19,8 @@ app.use(assistant)
 @assistant.thread_started
 def handle_assistant_thread_started(args: Args):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
-    args.say(text="Hey :wave: Let me know what you would like to do, or type 'help' if you're unsure!")
+    args.say(text="Hey :wave: Let me know what you would like to do!")
+    commands.get("help").function(args)
 
 
 @assistant.user_message
