@@ -10,6 +10,12 @@ from otto.image import retrieve_image
     "Create a cover image based on the provided background picture and information.",
 )
 def coverimage(args: Args):
+    args.client.chat_postMessage(
+        channel=args.event["channel"],
+        thread_ts=args.event["thread_ts"],
+        text="Alright! Let's make a cover image :esnstar:",
+    )
+    
     if retrieve_image(args.event["thread_ts"]) is None:
         args.client.chat_postMessage(
             channel=args.event["channel"],
@@ -20,6 +26,6 @@ def coverimage(args: Args):
     args.client.chat_postMessage(
         channel=args.event["channel"],
         thread_ts=args.event["thread_ts"],
-        text="Alright! Let's make a cover image :esnstar:",
+        text="Coverimage Generator",
         blocks=COVERIMAGE_BLOCKS,
     )
