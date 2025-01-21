@@ -15,7 +15,7 @@ def coverimage(args: Args):
         thread_ts=args.event["thread_ts"],
         text="Alright! Let's make a cover image :esnstar:",
     )
-    
+
     if retrieve_image(args.event["thread_ts"]) is None:
         args.client.chat_postMessage(
             channel=args.event["channel"],

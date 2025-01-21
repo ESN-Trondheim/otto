@@ -20,13 +20,14 @@ class Command:
 commands: dict[str, Command] = {}
 
 
-# TODO: For some reason I cannot run a function that is also a command. Something is wrong with the decorator.
 def command(keyword: str, description: str) -> Callable:
     """Annotation used to annotate command handlers"""
 
     def register_command(function: Callable[[Args], Any]):
         logging.debug(f"Registered command '{keyword}'")
         commands[keyword] = Command(function, keyword, description)
+
+        return function
 
     return register_command
 
