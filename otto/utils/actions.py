@@ -5,6 +5,8 @@ def transform_action_state_values(values: dict):
         for key, value in field.items():
             if value["type"] == "static_select":
                 text = value["selected_option"]["value"]
+            elif value["type"] == "datepicker":
+                text = value["selected_date"]
             else:
                 text = value["value"]
 

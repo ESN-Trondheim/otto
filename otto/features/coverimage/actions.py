@@ -1,3 +1,4 @@
+from datetime import date
 import io
 
 from slack_bolt import Args
@@ -13,16 +14,19 @@ from otto.utils.esn import EsnColor
 def coverimage(args: Args):
     args.ack()
 
-    channel_id = args.context.channel_id
-    thread_ts = args.context.thread_ts
+    # Apparently, args.context does not work for actions, so we have to use this instead.
+    channel_id = args.body["container"]["channel_id"]
+    thread_ts = args.body["container"]["thread_ts"]
 
     image = retrieve_image(thread_ts)
     state = transform_action_state_values(args.body["state"]["values"])
 
+    subtitle = date.fromisoformat(state["date"]).strftime("%m %B %Y")
+
     if image:
         coverimage = create_cover_image(
             title=state["title"],
-            subtitle=state["subtitle"],
+            subtitle=subtitle,
             color=EsnColor.from_display_name(state["color"]),
             format=CoverImageFormat.from_value(state["format"]),
             background=image,
@@ -30,7 +34,7 @@ def coverimage(args: Args):
     else:
         coverimage = create_cover_image(
             title=state["title"],
-            subtitle=state["subtitle"],
+            subtitle=subtitle,
             color=EsnColor.from_display_name(state["color"]),
             format=CoverImageFormat.from_value(state["format"]),
         )

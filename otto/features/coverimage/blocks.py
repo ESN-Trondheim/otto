@@ -1,10 +1,16 @@
 from otto.features.coverimage.generator import CoverImageFormat
-from otto.utils.blocks import actions, button, section, select_input, text_input
+from otto.utils.blocks import (
+    actions,
+    button,
+    date_input,
+    select_input,
+    text_input,
+)
 from otto.utils.esn import EsnColor
 
 COVERIMAGE_BLOCKS = [
     text_input(text="Title (required)", value="title"),
-    text_input(text="Subtitle", value="subtitle"),
+    date_input(text="Date", value="date"),
     select_input(
         text="Color (required)",
         value="color",

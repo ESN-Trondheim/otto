@@ -57,6 +57,22 @@ def select_input(text: str, value: str, options: list[str], initial_option: str 
     return d
 
 
+def date_input(text: str, value: str):
+    return {
+        "type": "input",
+        "element": {
+            "type": "datepicker",
+            "placeholder": {
+                "type": "plain_text",
+                "text": "Select a date",
+                "emoji": True,
+            },
+            "action_id": value,
+        },
+        "label": {"type": "plain_text", "text": text, "emoji": True},
+    }
+
+
 def actions(elements: list[dict[str, any]]):
     return {"type": "actions", "elements": elements}
 
