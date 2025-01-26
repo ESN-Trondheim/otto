@@ -5,7 +5,6 @@ from otto.utils.esn import EsnColor
 COVERIMAGE_BLOCKS = [
     text_input(text="Title (required)", value="title"),
     text_input(text="Subtitle", value="subtitle"),
-    text_input(text="Subsubtitle", value="subsubtitle"),
     select_input(
         text="Color (required)",
         value="color",

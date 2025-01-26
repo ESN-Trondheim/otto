@@ -13,8 +13,9 @@ from otto.utils.esn import EsnColor
 def coverimage(args: Args):
     args.ack()
 
-    channel_id = args.body["container"]["channel_id"]
-    thread_ts = args.body["container"]["thread_ts"]
+    channel_id = args.context.channel_id
+    thread_ts = args.context.thread_ts
+
     image = retrieve_image(thread_ts)
     state = transform_action_state_values(args.body["state"]["values"])
 
@@ -22,7 +23,6 @@ def coverimage(args: Args):
         coverimage = create_cover_image(
             title=state["title"],
             subtitle=state["subtitle"],
-            subsubtitle=state["subsubtitle"],
             color=EsnColor.from_display_name(state["color"]),
             format=CoverImageFormat.from_value(state["format"]),
             background=image,
@@ -31,7 +31,6 @@ def coverimage(args: Args):
         coverimage = create_cover_image(
             title=state["title"],
             subtitle=state["subtitle"],
-            subsubtitle=state["subsubtitle"],
             color=EsnColor.from_display_name(state["color"]),
             format=CoverImageFormat.from_value(state["format"]),
         )
@@ -42,7 +41,7 @@ def coverimage(args: Args):
     args.client.chat_postMessage(
         channel=channel_id,
         thread_ts=thread_ts,
-        text="Your cover image is on its way over! Remember: You can change a couple of settings above and generate again if something is off.",
+        text="Your cover image is on its way over!",
     )
 
     args.client.files_upload_v2(
@@ -50,4 +49,10 @@ def coverimage(args: Args):
         thread_ts=thread_ts,
         content=image_content.getvalue(),
         filename="coverimage.png",
+    )
+
+    args.client.chat_postMessage(
+        channel=channel_id,
+        thread_ts=thread_ts,
+        text="Remember: You can change a couple of settings above and generate again if something is off.",
     )
