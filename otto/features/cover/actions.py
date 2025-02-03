@@ -21,7 +21,12 @@ def generate_cover_graphics(args: Args):
     image = retrieve_image(thread_ts)
     state = transform_action_state_values(args.body["state"]["values"])
 
-    subtitle = date.fromisoformat(state["date"]).strftime("%x")
+    # Either one date without
+    if state["date-from"] is not None and state["date-to"] is not None:
+        subtitle = f"{date.fromisoformat(state["date-from"]).strftime("%x")} – {date.fromisoformat(state["date-to"]).strftime("%x")}"
+    else:
+        subtitle = date.fromisoformat(state["date-from"]).strftime("%x") if state["date-from"] is not None else date.fromisoformat(state["date-to"]).strftime("%x")
+
 
     if image:
         cover = create_cover(

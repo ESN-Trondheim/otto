@@ -32,7 +32,8 @@ def cover(args: Args):
         text="Cover Generator",
         blocks=[
             text_input(text="Title (required)", value="title"),
-            date_input(text="Date", value="date"),
+            date_input(text="Date (from)", value="date-from"),
+            date_input(text="Date (to)", value="date-to"),
             select_input(
                 text="Color (required)",
                 value="color",
