@@ -1,17 +1,17 @@
-from datetime import date
 import io
+from datetime import date
 
 from slack_bolt import Args
 
 from otto.app import app
-from otto.features.coverimage.generator import CoverImageFormat, create_cover_image
+from otto.features.cover.generator import CoverFormat, create_cover
 from otto.image import retrieve_image
 from otto.utils.actions import transform_action_state_values
 from otto.utils.esn import EsnColor
 
 
-@app.action("generate_coverimage")
-def coverimage(args: Args):
+@app.action("generate_cover_graphics")
+def generate_cover_graphics(args: Args):
     args.ack()
 
     # Apparently, args.context does not work for actions, so we have to use this instead.
@@ -21,26 +21,26 @@ def coverimage(args: Args):
     image = retrieve_image(thread_ts)
     state = transform_action_state_values(args.body["state"]["values"])
 
-    subtitle = date.fromisoformat(state["date"]).strftime("%m %B %Y")
+    subtitle = date.fromisoformat(state["date"]).strftime("%x")
 
     if image:
-        coverimage = create_cover_image(
+        cover = create_cover(
             title=state["title"],
             subtitle=subtitle,
             color=EsnColor.from_display_name(state["color"]),
-            format=CoverImageFormat.from_value(state["format"]),
+            format=CoverFormat.from_value(state["format"]),
             background=image,
         )
     else:
-        coverimage = create_cover_image(
+        cover = create_cover(
             title=state["title"],
             subtitle=subtitle,
             color=EsnColor.from_display_name(state["color"]),
-            format=CoverImageFormat.from_value(state["format"]),
+            format=CoverFormat.from_value(state["format"]),
         )
 
     image_content = io.BytesIO()
-    coverimage.save(image_content, format="JPEG")
+    cover.save(image_content, format="JPEG")
 
     args.client.chat_postMessage(
         channel=channel_id,
@@ -52,7 +52,7 @@ def coverimage(args: Args):
         channel=channel_id,
         thread_ts=thread_ts,
         content=image_content.getvalue(),
-        filename="coverimage.png",
+        filename="cover.png",
     )
 
     args.client.chat_postMessage(

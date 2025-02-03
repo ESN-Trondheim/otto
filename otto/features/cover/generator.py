@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from otto.utils.esn import EsnColor
 
 
-class CoverImageFont(Enum):
+class CoverFont(Enum):
     TITLE = ImageFont.truetype(
         str(Path.cwd().joinpath("assets", "fonts", "kelson-sans-bold.otf")), 90
     )
@@ -15,28 +15,24 @@ class CoverImageFont(Enum):
     )
 
 
-class CoverImageFormat(Enum):
+class CoverFormat(Enum):
     ESN_ACTIVITIES = (
         "Activities",
         (1920, 460),
         (19, -6, 116, 178),
-        Image.open(
-            Path.cwd().joinpath("assets", "overlays", "coverimage-activities.png")
-        ),
+        Image.open(Path.cwd().joinpath("assets", "overlays", "cover-activities.png")),
     )
     HOOPLA = (
         "Hoopla",
         (1045, 588),
         (19, -6, 90, 152),
-        Image.open(Path.cwd().joinpath("assets", "overlays", "coverimage-hoopla.png")),
+        Image.open(Path.cwd().joinpath("assets", "overlays", "cover-hoopla.png")),
     )
     FACEBOOK = (
         "Facebook",
         (1568, 588),
         (19, -6, 90, 152),
-        Image.open(
-            Path.cwd().joinpath("assets", "overlays", "coverimage-facebook.png")
-        ),
+        Image.open(Path.cwd().joinpath("assets", "overlays", "cover-facebook.png")),
     )
 
     def __new__(
@@ -78,7 +74,7 @@ class CoverImageFormat(Enum):
 
     @staticmethod
     def from_value(value: str):
-        for f in CoverImageFormat:
+        for f in CoverFormat:
             if f.value == value:
                 return f
 
@@ -86,18 +82,18 @@ class CoverImageFormat(Enum):
 default_subtitle = None
 default_subsubtitle = None
 default_color = EsnColor.DARK_BLUE
-default_format = CoverImageFormat.ESN_ACTIVITIES
+default_format = CoverFormat.ESN_ACTIVITIES
 default_background = Image.open(
-    Path.cwd().joinpath("assets", "backgrounds", "coverimage-default.png")
+    Path.cwd().joinpath("assets", "backgrounds", "cover-default.png")
 )
 
 
-def create_cover_image(
+def create_cover(
     title: str,
     subtitle: str = default_subtitle,
     subsubtitle: str = default_subsubtitle,
     color: EsnColor = default_color,
-    format: CoverImageFormat = default_format,
+    format: CoverFormat = default_format,
     background: Image.Image = default_background,
 ):
     cover = background.convert(mode="RGB")
@@ -178,23 +174,23 @@ def add_text_layer(
     subsubtitle: str,
 ):
     if subtitle or subsubtitle:
-        image = add_text(image, CoverImageFont.TITLE, title_offset, title)
+        image = add_text(image, CoverFont.TITLE, title_offset, title)
         if subtitle:
-            image = add_text(image, CoverImageFont.SUBTITLE, subtitle_offset, subtitle)
+            image = add_text(image, CoverFont.SUBTITLE, subtitle_offset, subtitle)
         if subsubtitle:
             image = add_text(
                 image,
-                CoverImageFont.SUBTITLE,
+                CoverFont.SUBTITLE,
                 subsubtitle_offset,
                 subsubtitle,
             )
     else:
-        image = add_text(image, CoverImageFont.TITLE, solo_title_offset, title)
+        image = add_text(image, CoverFont.TITLE, solo_title_offset, title)
 
     return image
 
 
-def add_text(image: Image.Image, font: CoverImageFont, text_offset: int, text: str):
+def add_text(image: Image.Image, font: CoverFont, text_offset: int, text: str):
     draw = ImageDraw.Draw(image)
 
     left, top, right, bottom = draw.textbbox((0, 0), text=text, font=font.value)

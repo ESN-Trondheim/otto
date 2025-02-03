@@ -1,3 +1,4 @@
+import locale
 import logging
 import os
 import sys
@@ -8,11 +9,12 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from waitress import serve
 
+from otto.app import app
+
 sys.dont_write_bytecode = True
+locale.setlocale(locale.LC_ALL, "no_NO")
 logging.basicConfig(level=logging.INFO, force=True)
 load_dotenv()
-
-from otto.app import app
 
 # When this file is executed directly the API is served either by opening a websocket connection to Slack for local development, or by exposing the Flask API.
 if __name__ == "__main__":
