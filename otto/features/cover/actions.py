@@ -10,6 +10,9 @@ from otto.utils.actions import transform_action_state_values
 from otto.utils.esn import EsnColor
 
 
+def format_date(iso_string: str) -> str:
+    return date.fromisoformat(iso_string).strftime("%d.%m.%Y")
+
 @app.action("generate_cover_graphics")
 def generate_cover_graphics(args: Args):
     args.ack()
@@ -23,9 +26,9 @@ def generate_cover_graphics(args: Args):
 
     # Either one date without
     if state["date-from"] is not None and state["date-to"] is not None:
-        subtitle = f"{date.fromisoformat(state["date-from"]).strftime("%x")} – {date.fromisoformat(state["date-to"]).strftime("%x")}"
+        subtitle = f"{format_date(state["date-from"])} – {format_date(state["date-to"])}"
     else:
-        subtitle = date.fromisoformat(state["date-from"]).strftime("%x") if state["date-from"] is not None else date.fromisoformat(state["date-to"]).strftime("%x")
+        subtitle = format_date(state["date-from"]) if state["date-from"] is not None else format_date(state["date-to"])
 
 
     if image:
