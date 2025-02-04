@@ -1,4 +1,3 @@
-import locale
 import logging
 import os
 import sys
@@ -12,7 +11,6 @@ from waitress import serve
 from otto.app import app
 
 sys.dont_write_bytecode = True
-locale.setlocale(locale.D_FMT, "no_NO")
 logging.basicConfig(level=logging.INFO, force=True)
 load_dotenv()
 
