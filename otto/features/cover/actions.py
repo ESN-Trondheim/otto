@@ -1,17 +1,14 @@
 import io
-from datetime import date
 
 from slack_bolt import Args
 
 from otto.app import app
 from otto.features.cover.generator import CoverFormat, create_cover
+from otto.features.cover.utils import format_date_range
 from otto.image import retrieve_image
 from otto.utils.actions import transform_action_state_values
 from otto.utils.esn import EsnColor
 
-
-def format_date(iso_string: str) -> str:
-    return date.fromisoformat(iso_string).strftime("%d.%m.%Y")
 
 @app.action("generate_cover_graphics")
 def generate_cover_graphics(args: Args):
@@ -25,10 +22,7 @@ def generate_cover_graphics(args: Args):
     state = transform_action_state_values(args.body["state"]["values"])
 
     # Either one date without
-    if state["date-from"] is not None and state["date-to"] is not None:
-        subtitle = f"{format_date(state["date-from"])} – {format_date(state["date-to"])}"
-    else:
-        subtitle = format_date(state["date-from"]) if state["date-from"] is not None else format_date(state["date-to"])
+    subtitle = format_date_range(state["date-from"], state["date-to"])
 
 
     if image:
