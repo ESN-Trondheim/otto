@@ -2,11 +2,11 @@ import io
 
 from slack_bolt import Args
 
-from otto.app import app
-from otto.features.cover.generator import CoverFormat, create_cover
-from otto.features.cover.utils import format_date_range
-from otto.image import retrieve_image
-from otto.utils.actions import transform_action_state_values
+from otto.features.cover import CoverFormat, create_cover
+from otto.features.image import retrieve_image
+from otto.slack.app import app
+from otto.slack.utils.actions import transform_action_state_values
+from otto.utils.date import format_date_range
 from otto.utils.esn import EsnColor
 
 
@@ -23,7 +23,6 @@ def generate_cover_graphics(args: Args):
 
     # Either one date without
     subtitle = format_date_range(state["date-from"], state["date-to"])
-
 
     if image:
         cover = create_cover(
