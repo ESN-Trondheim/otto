@@ -3,7 +3,7 @@ import io
 from slack_bolt import Args
 
 from otto.features.cover import CoverFormat, create_cover
-from otto.features.image import retrieve_image
+from otto.features.image_cache import retrieve_image
 from otto.slack.app import app
 from otto.slack.utils.actions import transform_action_state_values
 from otto.utils.date import format_date_range

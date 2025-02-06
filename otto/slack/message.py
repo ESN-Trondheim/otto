@@ -5,7 +5,7 @@ import requests
 from PIL import Image
 from slack_bolt import Args
 
-from otto.features.image import store_image
+from otto.features.image_cache import store_image
 from otto.slack.app import assistant
 from otto.slack.command import commands
 

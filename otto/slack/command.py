@@ -4,7 +4,7 @@ from typing import Any, Callable
 from slack_bolt import Args
 
 from otto.features.cover import CoverFormat
-from otto.features.image import retrieve_image
+from otto.features.image_cache import retrieve_image
 from otto.slack.utils.blocks import (
     actions,
     button,
