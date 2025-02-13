@@ -53,7 +53,7 @@ def generate_cover_graphics(args: Args):
         channel=channel_id,
         thread_ts=thread_ts,
         content=image_content.getvalue(),
-        filename="cover.png",
+        filename="cover.jpg",
     )
 
     args.client.chat_postMessage(
