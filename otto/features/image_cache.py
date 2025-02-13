@@ -13,10 +13,14 @@ def store_image(id: str, image: ImageClass):
 
 def retrieve_image(id: str) -> ImageClass | None:
     remove_old_images()
-    image, _ = images.get(id, None)
 
-    if image is None:
+    result = images.get(id, None)
+
+    if result is None:
         return None
+    
+    # Unpack result of type (ImageClass, datetime)
+    image, _ = result
 
     return image
 
@@ -24,8 +28,8 @@ def retrieve_image(id: str) -> ImageClass | None:
 def remove_old_images():
     now = datetime.now()
 
-    for id, (_, time) in images.items():
+    for id, (_, time) in list(images.items()):
         age = now - time
 
         if age > timedelta(hours=24):
-            images.remove(id)
+            images.pop(id)
