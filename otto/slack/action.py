@@ -8,6 +8,7 @@ from otto.slack.app import app
 from otto.slack.utils.actions import transform_action_state_values
 from otto.utils.date import format_date_range
 from otto.utils.esn import EsnColor
+from otto.utils.string import slugify_string
 
 
 @app.action("generate_cover_graphics")
@@ -53,7 +54,7 @@ def generate_cover_graphics(args: Args):
         channel=channel_id,
         thread_ts=thread_ts,
         content=image_content.getvalue(),
-        filename="cover.jpg",
+        filename=f"{slugify_string(state["title"])}-cover.jpg",
     )
 
     args.client.chat_postMessage(
