@@ -17,6 +17,9 @@ def format_date_range(from_iso: str, to_iso: str) -> str:
     from_date = arrow.get(from_iso)
     to_date = arrow.get(to_iso)
 
+    if from_date == to_date:
+        return from_date.format(date_format)
+
     if from_date.month == to_date.month:
         return (
             f"{from_date.format(collapsed_date_format)} - {to_date.format(date_format)}"
