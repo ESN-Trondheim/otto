@@ -1,7 +1,7 @@
 import logging
 import os
 
-from flask import Flask, request
+from flask import Flask, redirect, request
 from slack_bolt import App, Args, Assistant
 from slack_bolt.adapter.flask import SlackRequestHandler
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -41,6 +41,10 @@ def start_slack_app():
 
         slack_request_handler = SlackRequestHandler(app)
         api = Flask(__name__)
+
+        @api.route("/qr/<link_id>")
+        def _(qr_id: str):
+            redirect(qr_id)
 
         @api.route("/slack/events", methods=["POST"])
         def _():
