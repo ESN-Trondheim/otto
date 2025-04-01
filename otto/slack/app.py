@@ -32,4 +32,4 @@ def start_slack_app():
         SocketModeHandler(app, os.environ.get("SLACK_APP_TOKEN")).start()
     else:
         logging.info("Starting app in API mode...")
-        serve(get_flask_api(), host="0.0.0.0", port=os.environ.get("PORT", 8080))
+        serve(get_flask_api(app), host="0.0.0.0", port=os.environ.get("PORT", 8080))
