@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from PIL.Image import Image as ImageClass
 
-
 images: dict[str, (ImageClass, datetime)] = {}
 
 
@@ -18,7 +17,7 @@ def retrieve_image(id: str) -> ImageClass | None:
 
     if result is None:
         return None
-    
+
     # Unpack result of type (ImageClass, datetime)
     image, _ = result
 

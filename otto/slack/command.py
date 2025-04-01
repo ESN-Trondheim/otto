@@ -104,6 +104,7 @@ def cover(args: Args):
         ],
     )
 
+
 @command(
     "qr",
     "Manage dynamic QR codes for printed materials.",
