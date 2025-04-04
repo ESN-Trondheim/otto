@@ -5,13 +5,8 @@ from slack_bolt import Args
 
 from otto.features.cover import CoverFormat
 from otto.features.image_cache import retrieve_image
-from otto.slack.utils.blocks import (
-    actions,
-    button,
-    date_input,
-    select_input,
-    text_input,
-)
+from otto.slack.utils.blocks import (actions, button, date_input, select_input,
+                                     text_input)
 from otto.utils.esn import EsnColor
 
 
