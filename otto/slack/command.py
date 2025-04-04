@@ -5,13 +5,8 @@ from slack_bolt import Args
 
 from otto.features.cover import CoverFormat
 from otto.features.image_cache import retrieve_image
-from otto.slack.utils.blocks import (
-    actions,
-    button,
-    date_input,
-    select_input,
-    text_input,
-)
+from otto.slack.utils.blocks import (actions, button, date_input, select_input,
+                                     text_input)
 from otto.utils.esn import EsnColor
 
 
@@ -123,18 +118,13 @@ def link(args: Args):
         blocks=[
             actions(
                 elements=[
-                    button(
-                        action_id="link.new",
-                        text="Create a link",
-                        style="primary"
-                    ),
+                    button(action_id="link.new", text="Create a link", style="primary"),
                     button(
                         action_id="link.existing",
                         text="View or update a link",
-                        style="primary"
-                    )
+                        style="primary",
+                    ),
                 ]
             ),
-            
-        ]
+        ],
     )

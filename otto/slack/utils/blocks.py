@@ -77,7 +77,9 @@ def actions(elements: list[dict[str, any]]):
     return {"type": "actions", "elements": elements}
 
 
-def button(action_id: str, text: str, value: str = None, style: str = "default") -> dict:
+def button(
+    action_id: str, text: str, value: str = None, style: str = "default"
+) -> dict:
     return {
         "type": "button",
         "text": {"type": "plain_text", "text": text, "emoji": True},

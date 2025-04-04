@@ -88,11 +88,11 @@ def link_new(args: Args):
                         button(
                             action_id="link.submit",
                             text="Create new link",
-                            style="primary"
+                            style="primary",
                         ),
                     ]
                 ),
-            ]
+            ],
         )
     else:
         url = RedirectLink.get_link_url_by_id(link_id)
@@ -114,23 +114,23 @@ def link_new(args: Args):
                             action_id="link.submit",
                             text="Update link",
                             value=link_id,
-                            style="primary"
+                            style="primary",
                         ),
                         button(
                             action_id="link.qr",
                             text="Get QR code for link",
                             value=link_id,
-                            style="primary"
+                            style="primary",
                         ),
                         button(
                             action_id="link.delete",
                             text="Delete link",
                             value=link_id,
-                            style="danger"
+                            style="danger",
                         ),
                     ]
                 ),
-            ]
+            ],
         )
 
 
@@ -145,9 +145,9 @@ def link_existing(args: Args):
             select_input(
                 text="Link",
                 value="link.selected",
-                options=[link.id for link in RedirectLink.select()]
+                options=[link.id for link in RedirectLink.select()],
             )
-        ]
+        ],
     )
 
 
@@ -167,7 +167,7 @@ def link_update(args: Args):
         link.save()
     elif url:
         RedirectLink.create(id=link_id, url=url)
-    
+
     if url:
         args.client.chat_postMessage(
             channel=args.body["container"]["channel_id"],
