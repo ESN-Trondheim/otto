@@ -95,10 +95,40 @@ def cover(args: Args):
             actions(
                 elements=[
                     button(
+                        action_id="cover.generate",
                         text="Generate",
-                        value="generate_cover_graphics",
                         style="primary",
                     )
+                ]
+            ),
+        ],
+    )
+
+
+@command(
+    "link",
+    "Manage dynamic links and QR codes.",
+)
+def link(args: Args):
+    args.client.chat_postMessage(
+        channel=args.event["channel"],
+        thread_ts=args.event["thread_ts"],
+        text="Let's work those links :link: Are you looking to create a new link or change an existing link?",
+    )
+
+    args.client.chat_postMessage(
+        channel=args.event["channel"],
+        thread_ts=args.event["thread_ts"],
+        text="Select Link",
+        blocks=[
+            actions(
+                elements=[
+                    button(action_id="link.new", text="Create a link", style="primary"),
+                    button(
+                        action_id="link.existing",
+                        text="View or update a link",
+                        style="primary",
+                    ),
                 ]
             ),
         ],
