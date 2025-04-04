@@ -11,7 +11,7 @@ def send_qr(args: Args, link_id: str):
         box_size=10,
         border=1,
     )
-    qr.add_data(f"https://links.trondheim.esn.no/{link_id}")
+    qr.add_data(f"https://links.trondheim.esn.no/link/{link_id}")
     qr.make(fit=True)
     image = qr.make_image(fill="black", back_color="white")
     image_content = io.BytesIO()
