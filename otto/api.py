@@ -17,6 +17,6 @@ def get_flask_api(app: App):
     @api.route("/link/<link_id>")
     def handle_link(link_id: str):
         """This is the entry point for short links into the application"""
-        redirect(RedirectLink.get(id=link_id))
+        return redirect(RedirectLink.get_link_url_by_id(link_id))
 
     return api
