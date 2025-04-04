@@ -8,7 +8,7 @@ class RedirectLink(BaseModel):
     url = CharField()
 
     @staticmethod
-    def get_url_by_id(id: str) -> str:
+    def get_link_url_by_id(id: str) -> str:
         return RedirectLink.get(id=id).url
 
 
