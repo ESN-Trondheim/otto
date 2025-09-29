@@ -42,19 +42,20 @@ def cover(args: Args):
         thread_ts=args.event["thread_ts"],
         text="Cover Generator",
         blocks=[
-            text_input(text="Title (required)", value="title"),
-            date_input(text="Date (from)", value="date-from"),
-            date_input(text="Date (to)", value="date-to"),
-            select_input(
-                text="Color (required)",
-                value="color",
-                options=[c.display_name() for c in EsnColor],
-            ),
             select_input(
                 text="Format (required)",
                 value="format",
                 options=[f.value for f in CoverFormat],
             ),
+            select_input(
+                text="Color (required)",
+                value="color",
+                options=[c.display_name() for c in EsnColor],
+            ),
+            text_input(text="Title (required)", value="title"),
+            date_input(text="Date (from)", value="date-from"),
+            date_input(text="Date (to)", value="date-to"),
+            text_input(text="Custom subtitle (Will replace dates :warning:)", value="custom-subtitle"),
             actions(
                 elements=[
                     button(
@@ -79,8 +80,10 @@ def generate_cover_graphics(args: Args):
     image = retrieve_image(thread_ts)
     state = transform_action_state_values(args.body["state"]["values"])
 
-    # Either one date without
-    subtitle = format_date_range(state["date-from"], state["date-to"])
+    if state["custom-subtitle"]:
+        subtitle = state["custom-subtitle"]
+    else:
+        subtitle = format_date_range(state["date-from"], state["date-to"])
 
     if image:
         cover = create_cover(
