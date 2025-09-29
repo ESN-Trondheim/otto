@@ -2,7 +2,7 @@ from flask import Flask, redirect, request
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 
-from otto.persistence.redirect_link import RedirectLink, RedirectLinkDoesNotExist
+from otto.persistence.redirect_link import RedirectLink
 
 
 def get_flask_api(app: App):
