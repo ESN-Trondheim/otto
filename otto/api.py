@@ -2,7 +2,7 @@ from flask import Flask, redirect, request
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 
-from otto.persistence.redirect_link import RedirectLink
+from otto.persistence.redirect_link import RedirectLink, RedirectLinkDoesNotExist
 
 
 def get_flask_api(app: App):
@@ -17,6 +17,9 @@ def get_flask_api(app: App):
     @api.route("/link/<link_id>")
     def handle_link(link_id: str):
         """This is the entry point for short links into the application"""
-        return redirect(RedirectLink.get_link_url_by_id(link_id))
+        try:
+            return redirect(RedirectLink.get_link_url_by_id(link_id))
+        except Exception:
+            return redirect("https://trondheim.esn.no")
 
     return api
