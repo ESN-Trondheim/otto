@@ -1,3 +1,3 @@
-from otto.slack import action, app, command, message
+from otto.slack import app, command, commands
 
-__all__ = [app, action, command, message]
+__all__ = [app, command, commands]
