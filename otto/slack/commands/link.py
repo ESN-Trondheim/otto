@@ -145,7 +145,7 @@ def link_update(args: Args):
             text=f"The link '{link_id}' ready to go!",
         )
 
-    send_qr(args, link_id)
+    send_qr(args, f"https://links.trondheim.esn.no/link/{link_id}")
 
 
 @app.action("link.delete")

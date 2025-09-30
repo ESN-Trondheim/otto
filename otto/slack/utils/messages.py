@@ -4,14 +4,14 @@ import qrcode
 from slack_bolt import Args
 
 
-def send_qr(args: Args, link_id: str):
+def send_qr(args: Args, link: str):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
         box_size=10,
         border=1,
     )
-    qr.add_data(f"https://links.trondheim.esn.no/link/{link_id}")
+    qr.add_data(link)
     qr.make(fit=True)
     image = qr.make_image(fill="black", back_color="white")
     image_content = io.BytesIO()
@@ -21,5 +21,5 @@ def send_qr(args: Args, link_id: str):
         channel=args.body["container"]["channel_id"],
         thread_ts=args.body["container"]["thread_ts"],
         content=image_content.getvalue(),
-        filename=f"{link_id}-qr.jpg",
+        filename="qr.jpg",
     )

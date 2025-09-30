@@ -7,13 +7,8 @@ from otto.features.image_cache import retrieve_image
 from otto.slack.app import app
 from otto.slack.command import command
 from otto.slack.utils.actions import transform_action_state_values
-from otto.slack.utils.blocks import (
-    actions,
-    button,
-    date_input,
-    select_input,
-    text_input,
-)
+from otto.slack.utils.blocks import (actions, button, date_input, select_input,
+                                     text_input)
 from otto.utils.date import format_date_range
 from otto.utils.esn import EsnColor
 from otto.utils.string import slugify_string
@@ -55,7 +50,10 @@ def cover(args: Args):
             text_input(text="Title (required)", value="title"),
             date_input(text="Date (from)", value="date-from"),
             date_input(text="Date (to)", value="date-to"),
-            text_input(text="Custom subtitle (Will replace dates :warning:)", value="custom-subtitle"),
+            text_input(
+                text="Custom subtitle (Will replace dates :warning:)",
+                value="custom-subtitle",
+            ),
             actions(
                 elements=[
                     button(
