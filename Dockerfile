@@ -1,8 +1,10 @@
-FROM python:3.12
+FROM ghcr.io/astral-sh/uv:python3.14-trixie
+
+ENV UV_NO_DEV=1
 
 WORKDIR /app
 COPY . /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv sync --locked
 
-CMD ["python", "main.py"]
+CMD ["uv", "run", "main.py"]

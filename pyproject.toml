@@ -1,0 +1,25 @@
+[project]
+name = "otto"
+version = "1.0.0"
+description = "Slack-bot for ESN Trondheim"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "arrow>=1.4.0",
+    "flask>=3.1.2",
+    "peewee>=3.19.0",
+    "pillow>=12.1.0",
+    "psycopg2>=2.9.11",
+    "python-dotenv>=1.2.1",
+    "qrcode>=8.2",
+    "requests>=2.32.5",
+    "slack-bolt>=1.27.0",
+    "waitress>=3.0.2",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.12.0",
+    "isort>=7.0.0",
+    "pylint>=4.0.4",
+]
