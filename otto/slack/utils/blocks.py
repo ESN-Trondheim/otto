@@ -77,13 +77,16 @@ def actions(elements: list[dict[str, any]]):
     return {"type": "actions", "elements": elements}
 
 
-def button(
-    action_id: str, text: str, value: str = None, style: str = "default"
-) -> dict:
-    return {
+def button(action_id: str, text: str, value: str = None, style: str = None) -> dict:
+    d = {
         "type": "button",
         "text": {"type": "plain_text", "text": text, "emoji": True},
         "action_id": action_id,
         "value": value if value else action_id,
-        "style": style,
     }
+
+    # Slack only accepts "primary" or "danger", and the field must be omitted for the default style
+    if style is not None:
+        d["style"] = style
+
+    return d
