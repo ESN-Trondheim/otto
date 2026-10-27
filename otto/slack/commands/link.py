@@ -107,6 +107,17 @@ def link_new(args: Args):
 @app.action("link.existing")
 def link_existing(args: Args):
     args.ack()
+    link_ids = [link.id for link in RedirectLink.select()]
+
+    # Slack rejects select inputs without options
+    if not link_ids:
+        args.client.chat_postMessage(
+            channel=args.body["container"]["channel_id"],
+            thread_ts=args.body["container"]["thread_ts"],
+            text="There are no links yet. Create one to get started!",
+        )
+        return
+
     args.client.chat_postMessage(
         channel=args.body["container"]["channel_id"],
         thread_ts=args.body["container"]["thread_ts"],
@@ -115,7 +126,7 @@ def link_existing(args: Args):
             select_input(
                 text="Link",
                 value="link.selected",
-                options=[link.id for link in RedirectLink.select()],
+                options=link_ids,
             )
         ],
     )

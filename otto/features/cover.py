@@ -135,8 +135,8 @@ def resize_and_crop_to_dimension(
 
         # Crop away the excessive height if neccessary
         if image.height > target_height:
-            padding = (image.height - target_height) / 2
-            coords = (0, padding, target_width, image.height - padding)
+            padding = (image.height - target_height) // 2
+            coords = (0, padding, target_width, padding + target_height)
             image = image.crop(coords)
     else:  # If background width is too big
         # Resize the image so the height reaches the target height (while maintaining original aspect ratio)
@@ -146,8 +146,8 @@ def resize_and_crop_to_dimension(
 
         # Crop away the excessive width if neccessary
         if image.width > target_width:
-            padding = (image.width - target_width) / 2
-            coords = (padding, 0, image.width - padding, target_height)
+            padding = (image.width - target_width) // 2
+            coords = (padding, 0, padding + target_width, target_height)
             image = image.crop(coords)
 
     return image
