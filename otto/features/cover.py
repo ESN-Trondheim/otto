@@ -1,17 +1,29 @@
+import base64
+import io
 from enum import Enum
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from PIL import Image, ImageDraw, ImageFont
+from html2image import Html2Image
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from PIL import Image, ImageFont
 
 from otto.utils.esn import EsnColor
+
+assets = Path.cwd().joinpath("assets")
+
+jinja = Environment(
+    loader=FileSystemLoader(assets.joinpath("templates")),
+    autoescape=select_autoescape(),
+)
 
 
 class CoverFont(Enum):
     TITLE = ImageFont.truetype(
-        str(Path.cwd().joinpath("assets", "fonts", "kelson-sans-bold.otf")), 90
+        str(assets.joinpath("fonts", "kelson-sans-bold.otf")), 90
     )
     SUBTITLE = ImageFont.truetype(
-        str(Path.cwd().joinpath("assets", "fonts", "kelson-sans-bold.otf")), 50
+        str(assets.joinpath("fonts", "kelson-sans-bold.otf")), 50
     )
 
 
@@ -19,32 +31,30 @@ class CoverFormat(Enum):
     ESN_ACTIVITIES = (
         "Activities",
         (1920, 460),
-        (19, -6, 116, 178),
-        Image.open(Path.cwd().joinpath("assets", "overlays", "cover-activities.png")),
+        (19, -6, 116),
+        "cover-activities.html",
     )
     HOOPLA = (
         "Hoopla",
         (1045, 588),
-        (19, -6, 90, 152),
-        Image.open(Path.cwd().joinpath("assets", "overlays", "cover-hoopla.png")),
+        (19, -6, 90),
+        "cover-hoopla.html",
     )
     FACEBOOK = (
         "Facebook",
         (1568, 588),
-        (19, -6, 90, 152),
-        Image.open(Path.cwd().joinpath("assets", "overlays", "cover-facebook.png")),
+        (19, -6, 90),
+        "cover-facebook.html",
     )
 
-    def __new__(
-        cls, value: str, size: tuple[int], offset: tuple[int], overlay: Image.Image
-    ):
+    def __new__(cls, value: str, size: tuple[int], offset: tuple[int], template: str):
         """This override allows multi-value enum objects"""
         obj = object.__new__(cls)
 
         obj._value_ = value
         obj.size = size
         obj.offset = offset
-        obj.overlay = overlay
+        obj.template = template
 
         return obj
 
@@ -68,10 +78,6 @@ class CoverFormat(Enum):
     def subtitle_offset(self) -> int:
         return self.offset[2]
 
-    @property
-    def subsubtitle_offset(self) -> int:
-        return self.offset[3]
-
     @staticmethod
     def from_value(value: str):
         for f in CoverFormat:
@@ -80,41 +86,100 @@ class CoverFormat(Enum):
 
 
 default_subtitle = None
-default_subsubtitle = None
 default_color = EsnColor.DARK_BLUE
 default_format = CoverFormat.ESN_ACTIVITIES
-default_background = Image.open(
-    Path.cwd().joinpath("assets", "backgrounds", "cover-default.png")
-)
+default_background = Image.open(assets.joinpath("backgrounds", "cover-default.png"))
 
 
 def create_cover(
     title: str,
     subtitle: str = default_subtitle,
-    subsubtitle: str = default_subsubtitle,
     color: EsnColor = default_color,
     format: CoverFormat = default_format,
     background: Image.Image = default_background,
-):
-    cover = background.convert(mode="RGB")
-    cover = resize_and_crop_to_dimension(
-        cover, format.target_width, format.target_height
-    )
-    cover = add_color_layer(cover, color)
-    cover = add_overlay_layer(cover, format.overlay)
+) -> Image.Image:
+    """Creates a cover image by rendering an HTML template in a headless browser"""
+    html = render_cover_html(title, subtitle, color, format, background)
 
-    cover = add_text_layer(
-        cover,
-        format.solotitle_offset,
-        format.title_offset,
-        format.subtitle_offset,
-        format.subsubtitle_offset,
-        title,
-        subtitle,
-        subsubtitle,
+    with TemporaryDirectory() as directory:
+        # Running as root in Docker requires the sandbox to be disabled
+        hti = Html2Image(
+            browser="chromium",
+            output_path=directory,
+            temp_path=directory,
+            size=format.size,
+            custom_flags=[
+                "--default-background-color=00000000",
+                "--hide-scrollbars",
+                "--no-sandbox",
+            ],
+            disable_logging=True,
+        )
+        (path,) = hti.screenshot(html_str=html, save_as="cover.png")
+
+        with Image.open(path) as screenshot:
+            return screenshot.convert(mode="RGB")
+
+
+def render_cover_html(
+    title: str,
+    subtitle: str = default_subtitle,
+    color: EsnColor = default_color,
+    format: CoverFormat = default_format,
+    background: Image.Image = default_background,
+) -> str:
+    # The background is cropped beforehand, so the browser only has to display it
+    background = resize_and_crop_to_dimension(
+        background.convert(mode="RGB"), format.target_width, format.target_height
     )
 
-    return cover
+    return jinja.get_template(format.template).render(
+        # Makes the relative asset paths in the template work from the temporary folder it is rendered in
+        base=assets.joinpath("templates").as_uri() + "/",
+        background=to_data_uri(background),
+        grid_style=f"background-color: rgba{(*color.rgb(), 0.6)}",
+        lines=layout_lines(format, title, subtitle),
+    )
+
+
+def layout_lines(format: CoverFormat, title: str, subtitle: str | None) -> list[dict]:
+    """Positions each line of text the same way as the original Pillow cover generator did"""
+    if subtitle:
+        lines = [
+            (CoverFont.TITLE, format.title_offset, title),
+            (CoverFont.SUBTITLE, format.subtitle_offset, subtitle),
+        ]
+    else:
+        lines = [(CoverFont.TITLE, format.solotitle_offset, title)]
+
+    return [layout_line(format, *line) for line in lines]
+
+
+def layout_line(format: CoverFormat, font: CoverFont, offset: int, text: str) -> dict:
+    left, top, right, bottom = font.value.getbbox(text)
+    ascent, descent = font.value.getmetrics()
+
+    # Pillow places text by its ascender line, which the browser draws above the top of a line box this tight
+    leading = (font.value.size - ascent - descent) / 2
+
+    x = (format.target_width - (right - left)) / 2
+    y = (format.target_height - (bottom - top)) / 2 + offset - leading
+
+    return {
+        "text": text,
+        "size": font.value.size,
+        "x": x,
+        "y": y,
+        "style": f"font-size: {font.value.size}px; left: {x}px; top: {y}px; transform: none",
+    }
+
+
+def to_data_uri(image: Image.Image) -> str:
+    """Embeds an image in the template, as uploaded images only exist in memory"""
+    content = io.BytesIO()
+    image.save(content, format="PNG")
+
+    return f"data:image/png;base64,{base64.b64encode(content.getvalue()).decode()}"
 
 
 def resize_and_crop_to_dimension(
@@ -149,57 +214,5 @@ def resize_and_crop_to_dimension(
             padding = (image.width - target_width) // 2
             coords = (padding, 0, padding + target_width, target_height)
             image = image.crop(coords)
-
-    return image
-
-
-def add_color_layer(image: Image.Image, color: EsnColor):
-    color_layer = Image.new(image.mode, image.size, color.rgb())
-    return Image.blend(image, color_layer, 0.60)
-
-
-def add_overlay_layer(image: Image.Image, overlay: Image.Image):
-    image.paste(overlay, (0, 0), overlay)
-    return image
-
-
-def add_text_layer(
-    image: Image.Image,
-    solo_title_offset: int,
-    title_offset: int,
-    subtitle_offset: int,
-    subsubtitle_offset: int,
-    title: str,
-    subtitle: str,
-    subsubtitle: str,
-):
-    if subtitle or subsubtitle:
-        image = add_text(image, CoverFont.TITLE, title_offset, title)
-        if subtitle:
-            image = add_text(image, CoverFont.SUBTITLE, subtitle_offset, subtitle)
-        if subsubtitle:
-            image = add_text(
-                image,
-                CoverFont.SUBTITLE,
-                subsubtitle_offset,
-                subsubtitle,
-            )
-    else:
-        image = add_text(image, CoverFont.TITLE, solo_title_offset, title)
-
-    return image
-
-
-def add_text(image: Image.Image, font: CoverFont, text_offset: int, text: str):
-    draw = ImageDraw.Draw(image)
-
-    left, top, right, bottom = draw.textbbox((0, 0), text=text, font=font.value)
-    width = right - left
-    height = bottom - top
-    draw.text(
-        ((image.size[0] - width) / 2, (image.size[1] - height) / 2 + text_offset),
-        text,
-        font=font.value,
-    )
 
     return image
