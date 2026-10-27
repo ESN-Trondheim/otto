@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Cover</title>
+    <!-- Asset paths are relative to this folder, so the template can be previewed by opening it in a browser -->
+    <base href="{{ base }}">
+    <style>
+        @font-face {
+            font-family: "Kelson Sans Bold";
+            src: url("../fonts/kelson-sans-bold.otf");
+        }
+
+        body {
+            background-color: white;
+            margin: 0;
+            width: 1568px;
+            height: 588px;
+        }
+
+        .container {
+            background-size: cover;
+            background-position: center;
+            /* The default background is only visible in previews, as the generated background covers it */
+            background-image: url("{{ background }}"), url("../backgrounds/cover-default.png");
+            position: relative;
+            width: 1568px;
+            height: 588px;
+        }
+
+        .grid {
+            background-color: rgba(46, 49, 146, 0.6);
+            width: 1568px;
+            height: 588px;
+        }
+
+        .hashtag {
+            width: 230px;
+            position: absolute;
+            top: 50px;
+            left: 275px;
+        }
+
+        .logo {
+            width: 260px;
+            position: absolute;
+            top: 29px;
+            left: 1045px;
+        }
+
+        /* Generated covers position each line by its top left corner, the preview shows a centered title */
+        .line {
+            color: white;
+            font-family: "Kelson Sans Bold";
+            font-kerning: none;
+            font-size: 90px;
+            font-weight: normal;
+            left: 50%;
+            line-height: 1;
+            margin: 0;
+            position: absolute;
+            top: 277px;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid" style="{{ grid_style }}">
+            <img class="hashtag" alt="#thisisesn" src="../images/this-is-esn.png">
+            <img class="logo" alt="ESN Trondheim" src="../logos/esn-trondheim-white.png">
+            <!-- {% for line in lines %} -->
+            <p class="line" style="{{ line.style }}">{{ line.text }}</p>
+            <!-- {% endfor %} -->
+        </div>
+    </div>
+</body>
+</html>
