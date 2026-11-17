@@ -1,11 +1,10 @@
 import io
 
-from slack_bolt import Args
+from slack_bolt import App, Args
 
 from otto.features.cover import CoverFormat, create_cover
 from otto.features.image_cache import retrieve_image
-from otto.slack.app import app
-from otto.slack.command import command
+from otto.slack.command import register_command
 from otto.slack.utils.actions import transform_action_state_values
 from otto.slack.utils.blocks import (
     actions,
@@ -19,10 +18,6 @@ from otto.utils.esn import EsnColor
 from otto.utils.string import slugify_string
 
 
-@command(
-    "cover",
-    "Create cover graphics for a digital platform.",
-)
 def cover(args: Args):
     args.client.chat_postMessage(
         channel=args.event["channel"],
@@ -72,7 +67,6 @@ def cover(args: Args):
     )
 
 
-@app.action("cover.generate")
 def generate_cover_graphics(args: Args):
     args.ack()
 
@@ -125,3 +119,8 @@ def generate_cover_graphics(args: Args):
         thread_ts=thread_ts,
         text="Remember: You can change a couple of settings above and generate again if something is off.",
     )
+
+
+def register(app: App):
+    register_command("cover", "Create cover graphics for a digital platform.", cover)
+    app.action("cover.generate")(generate_cover_graphics)

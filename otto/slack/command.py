@@ -19,19 +19,12 @@ class Command:
 commands: dict[str, Command] = {}
 
 
-def command(keyword: str, description: str) -> Callable:
-    """Annotation used to annotate command handlers"""
-
-    def register_command(function: Callable[[Args], Any]):
-        logging.debug(f"Registered command '{keyword}'")
-        commands[keyword] = Command(function, keyword, description)
-
-        return function
-
-    return register_command
+def register_command(keyword: str, description: str, function: Callable[[Args], Any]):
+    """Makes a command handler available by its keyword"""
+    logging.debug(f"Registered command '{keyword}'")
+    commands[keyword] = Command(function, keyword, description)
 
 
-@command("help", "Get this list of all available commands.")
 def send_command_list(args: Args):
     header = "*Available commands*\n\n"
     command_list = "\n".join(

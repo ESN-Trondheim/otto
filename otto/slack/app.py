@@ -10,21 +10,39 @@ from waitress import serve
 
 from otto.api import get_flask_api
 from otto.features.image_cache import store_image
-from otto.slack.command import commands, send_command_list
+from otto.slack.command import commands, register_command, send_command_list
+from otto.slack.commands import cover, link, qr
 
 # Documentation: https://api.slack.com/docs/apps/ai
 # Sample application: https://github.com/slack-samples/bolt-python-assistant-template/blob/main/listeners/events/assistant_thread_started.py
 
-app = App(
-    signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
-    token=os.environ.get("SLACK_BOT_TOKEN"),
-)
-assistant = Assistant()
-app.use(assistant)
+
+def create_app() -> App:
+    """Creates the Slack app with the assistant and the action handlers of every command"""
+    app = App(
+        signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
+        token=os.environ.get("SLACK_BOT_TOKEN"),
+    )
+
+    assistant = Assistant()
+    assistant.thread_started(handle_assistant_thread_started)
+    assistant.user_message(handle_message)
+    app.use(assistant)
+
+    register_command(
+        "help", "Get this list of all available commands.", send_command_list
+    )
+
+    for command in (cover, link, qr):
+        command.register(app)
+
+    return app
 
 
 def start_slack_app():
     """Start the Slack app in production or local development (socket) mode"""
+    app = create_app()
+
     if os.environ.get("SOCKET_MODE") == "True":
         logging.info("Starting app in socket mode...")
         SocketModeHandler(app, os.environ.get("SLACK_APP_TOKEN")).start()
@@ -33,14 +51,12 @@ def start_slack_app():
         serve(get_flask_api(app), host="0.0.0.0", port=os.environ.get("PORT", 8080))
 
 
-@assistant.thread_started
 def handle_assistant_thread_started(args: Args):
     """Handles the assistant_thread_started event: https://api.slack.com/events/assistant_thread_started"""
     args.say(text="Hey :wave: Let me know what you would like to do!")
     send_command_list(args)
 
 
-@assistant.user_message
 def handle_message(args: Args):
     """Handles the message event: https://api.slack.com/events/message.im"""
     if args.event.get("subtype", None) == "file_share":
