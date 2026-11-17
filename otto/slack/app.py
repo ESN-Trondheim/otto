@@ -29,8 +29,8 @@ def create_app() -> App:
     assistant.user_message(handle_message)
     app.use(assistant)
 
-    for module in (cover, link, qr):
-        module.register(app)
+    for command in (cover, link, qr):
+        command.register(app)
 
     return app
 
