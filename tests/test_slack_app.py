@@ -3,15 +3,31 @@ from unittest.mock import MagicMock, patch
 
 from PIL import Image
 
-import otto.slack  # noqa: F401 # Registers all commands on import
 from otto.features.image_cache import retrieve_image
-from otto.slack.app import _handle_command, handle_message
+from otto.slack.app import _handle_command, create_app, handle_message
 from otto.slack.command import commands
 from tests.conftest import posted_texts
 
 
 def test_all_commands_are_registered():
     assert {"help", "cover", "link", "qr"} <= commands.keys()
+
+
+def test_create_app_registers_command_actions():
+    with patch("otto.slack.app.App") as app_class:
+        create_app()
+
+    action_ids = {c.args[0] for c in app_class.return_value.action.call_args_list}
+    assert action_ids == {
+        "cover.generate",
+        "link.new",
+        "link.selected",
+        "link.existing",
+        "link.submit",
+        "link.qr",
+        "link.delete",
+        "qr.create",
+    }
 
 
 def test_help_lists_commands(event_args):

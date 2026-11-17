@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from slack_sdk.models.blocks import Block
 
-# Must be set before any otto module is imported, as the database connection and Slack app are created on import
+# Must be set before any otto module is imported, as the database connection is created on import
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["SLACK_BOT_TOKEN"] = "xoxb-test"
 os.environ["SLACK_SIGNING_SECRET"] = "test-secret"

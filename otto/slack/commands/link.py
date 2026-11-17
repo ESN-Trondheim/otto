@@ -1,7 +1,6 @@
-from slack_bolt import Args
+from slack_bolt import App, Args
 
 from otto.persistence.redirect_link import RedirectLink
-from otto.slack.app import app
 from otto.slack.command import command
 from otto.slack.utils.actions import transform_action_state_values
 from otto.slack.utils.blocks import actions, button, select_input, text_input
@@ -38,8 +37,6 @@ def link(args: Args):
     )
 
 
-@app.action("link.new")
-@app.action("link.selected")
 def link_new(args: Args):
     args.ack()
     state = transform_action_state_values(args.body["state"]["values"])
@@ -104,7 +101,6 @@ def link_new(args: Args):
         )
 
 
-@app.action("link.existing")
 def link_existing(args: Args):
     args.ack()
     link_ids = [link.id for link in RedirectLink.select()]
@@ -132,8 +128,6 @@ def link_existing(args: Args):
     )
 
 
-@app.action("link.submit")
-@app.action("link.qr")
 def link_update(args: Args):
     args.ack()
 
@@ -159,7 +153,6 @@ def link_update(args: Args):
     send_qr(args, f"https://links.trondheim.esn.no/link/{link_id}")
 
 
-@app.action("link.delete")
 def link_delete(args: Args):
     args.ack()
     link_id = args.body["actions"][0]["value"]
@@ -169,3 +162,12 @@ def link_delete(args: Args):
         thread_ts=args.body["container"]["thread_ts"],
         text=f"The link '{link_id}' was deleted :wastebasket:",
     )
+
+
+def register(app: App):
+    app.action("link.new")(link_new)
+    app.action("link.selected")(link_new)
+    app.action("link.existing")(link_existing)
+    app.action("link.submit")(link_update)
+    app.action("link.qr")(link_update)
+    app.action("link.delete")(link_delete)
