@@ -10,7 +10,7 @@ from waitress import serve
 
 from otto.api import get_flask_api
 from otto.features.image_cache import store_image
-from otto.slack.command import commands, send_command_list
+from otto.slack.command import commands, register_command, send_command_list
 from otto.slack.commands import cover, link, qr
 
 # Documentation: https://api.slack.com/docs/apps/ai
@@ -28,6 +28,10 @@ def create_app() -> App:
     assistant.thread_started(handle_assistant_thread_started)
     assistant.user_message(handle_message)
     app.use(assistant)
+
+    register_command(
+        "help", "Get this list of all available commands.", send_command_list
+    )
 
     for command in (cover, link, qr):
         command.register(app)

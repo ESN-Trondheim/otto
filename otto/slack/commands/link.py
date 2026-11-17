@@ -1,16 +1,12 @@
 from slack_bolt import App, Args
 
 from otto.persistence.redirect_link import RedirectLink
-from otto.slack.command import command
+from otto.slack.command import register_command
 from otto.slack.utils.actions import transform_action_state_values
 from otto.slack.utils.blocks import actions, button, select_input, text_input
 from otto.slack.utils.messages import send_qr
 
 
-@command(
-    "link",
-    "Manage dynamic links and QR codes.",
-)
 def link(args: Args):
     args.client.chat_postMessage(
         channel=args.event["channel"],
@@ -165,6 +161,7 @@ def link_delete(args: Args):
 
 
 def register(app: App):
+    register_command("link", "Manage dynamic links and QR codes.", link)
     app.action("link.new")(link_new)
     app.action("link.selected")(link_new)
     app.action("link.existing")(link_existing)

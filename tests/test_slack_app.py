@@ -1,6 +1,7 @@
 from io import BytesIO
 from unittest.mock import MagicMock, patch
 
+import pytest
 from PIL import Image
 
 from otto.features.image_cache import retrieve_image
@@ -9,14 +10,19 @@ from otto.slack.command import commands
 from tests.conftest import posted_texts
 
 
+@pytest.fixture(autouse=True)
+def app_class():
+    """Registers all commands, without creating a real Slack app"""
+    with patch("otto.slack.app.App") as app_class:
+        create_app()
+        yield app_class
+
+
 def test_all_commands_are_registered():
     assert {"help", "cover", "link", "qr"} <= commands.keys()
 
 
-def test_create_app_registers_command_actions():
-    with patch("otto.slack.app.App") as app_class:
-        create_app()
-
+def test_create_app_registers_command_actions(app_class):
     action_ids = {c.args[0] for c in app_class.return_value.action.call_args_list}
     assert action_ids == {
         "cover.generate",
